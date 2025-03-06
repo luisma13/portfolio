@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luis María González Pradas | Full Stack Developer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+</head>
+<body>
+    <div class="loader">
+        <div class="loader-content">
+            <span>L</span>
+            <span>M</span>
+            <span>G</span>
+            <span>P</span>
+        </div>
+    </div>
+
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">LMGP</div>
+            <button class="mobile-menu-btn">☰</button>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Luis María González Pradas</h1>
+                <h2>Desarrollador Full Stack</h2>
+                <p>Creando experiencias web únicas y funcionales</p>
+                <div class="mode-buttons">
+                    <button class="mode-btn" id="toggle-3d">Ver en 3D</button>
+                </div>
+            </div>
+            <div id="three-container"></div>
+            <button class="discover-btn" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M12 4L12 20M12 20L5 13M12 20L19 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="about" class="section" style="margin-top: 4rem;">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Full Stack Developer y Tech Lead con amplia experiencia en desarrollo de aplicaciones web, móviles y videojuegos. Especializado en tecnologías 3D y blockchain.</p>
+                    <div class="skills">
+                        <h3>Skills</h3>
+                        <div class="skills-category">
+                            <h4>Lenguajes</h4>
+                            <ul>
+                                <li>TypeScript/JavaScript</li>
+                                <li>Python</li>
+                                <li>Java</li>
+                                <li>C++</li>
+                            </ul>
+                        </div>
+                        <div class="skills-category">
+                            <h4>Frontend</h4>
+                            <ul>
+                                <li>Angular</li>
+                                <li>React</li>
+                                <li>Vue.js</li>
+                                <li>Three.js/WebGL</li>
+                            </ul>
+                        </div>
+                        <div class="skills-category">
+                            <h4>Backend</h4>
+                            <ul>
+                                <li>Node.js</li>
+                                <li>NestJS</li>
+                                <li>MongoDB</li>
+                                <li>SQL</li>
+                            </ul>
+                        </div>
+                        <div class="skills-category">
+                            <h4>Game Dev & 3D</h4>
+                            <ul>
+                                <li>Unity</li>
+                                <li>Unreal Engine</li>
+                                <li>Blender</li>
+                                <li>3D Graphics</li>
+                            </ul>
+                        </div>
+                        <div class="skills-category">
+                            <h4>DevOps & Tools</h4>
+                            <ul>
+                                <li>CI/CD</li>
+                                <li>Jenkins</li>
+                                <li>Android Development</li>
+                                <li>RPA/Automation</li>
+                            </ul>
+                        </div>
+                        <div class="skills-category">
+                            <h4>Blockchain</h4>
+                            <ul>
+                                <li>Solidity</li>
+                                <li>Smart Contracts</li>
+                                <li>Web3</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="section">
+            <h2>Experiencia Profesional</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="company-header">
+                            <img src="https://media.licdn.com/dms/image/v2/C4D0BAQFaeW5t35yVpQ/company-logo_100_100/company-logo_100_100/0/1669231602742/polygonal_mind_logo?e=1749081600&v=beta&t=wW91JOVBcFcNZX88L7lS7hTseNCinwKfhKoOYRIKJiw" alt="Polygonal Mind Logo" class="company-logo">
+                            <h3>Tech Lead - Polygonal Mind</h3>
+                        </div>
+                        <span class="date">jul. 2021 - jul. 2024 · 3 años 1 mes</span>
+                        <ul>
+                            <li>Liderazgo técnico y desarrollo de la plataforma VIPE (Marketplace de Avatares 3D)</li>
+                            <li>Desarrollo con Angular, NestJS, ThreeJS, MongoDB, Jenkins y contratos inteligentes</li>
+                            <li>Desarrollo de SDKs en JavaScript, Unity y Unreal para interoperabilidad de avatares</li>
+                            <li>Automatización de procesos 3D con Blender API para generación de avatares humanoides</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="company-header">
+                            <img src="https://media.licdn.com/dms/image/v2/C560BAQF9mgMh42q2_Q/company-logo_100_100/company-logo_100_100/0/1631437148240/espublico_tech_logo?e=1749081600&v=beta&t=UkenQ6VaIJ7x2eW74IMkncuMTe8gDwxJrUDGShrfTtM" alt="esPublico Logo" class="company-logo">
+                            <h3>Senior Java Developer - esPublico Tecnología</h3>
+                        </div>
+                        <span class="date">dic. 2019 - jul. 2021 · 1 año 8 meses</span>
+                        <ul>
+                            <li>Departamento de automatización robotizada (RPA)</li>
+                            <li>Desarrollo de integraciones y APIs</li>
+                            <li>Aplicaciones de escritorio Java</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="company-header">
+                            <img src="https://media.licdn.com/dms/image/v2/D4E0BAQEkhElrB6oYVQ/company-logo_100_100/company-logo_100_100/0/1729860937989?e=1749081600&v=beta&t=L1AFerzKLpINIE-fibajCYPONXWF7S9YeVPC9jANxDI" alt="MedUX Logo" class="company-logo">
+                            <h3>Android Developer - MedUX</h3>
+                        </div>
+                        <span class="date">nov. 2016 - jul. 2019 · 2 años 9 meses</span>
+                        <ul>
+                            <li>Desarrollo Android para medición de calidad en redes fijas y móviles</li>
+                            <li>Implementación con Java, Dagger2, API Rest, MongoDB</li>
+                            <li>Tests unitarios y automatización robotizada (RPA)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="company-header">
+                            <img src="https://media.licdn.com/dms/image/v2/C4E0BAQFPeoAJIngkUQ/company-logo_100_100/company-logo_100_100/0/1631336536058?e=1749081600&v=beta&t=TX6fSedAJ6qGtw5mRCV9j3gWAxAOPvd3eGXZXSDx194" alt="Tessera Studios Logo" class="company-logo">
+                            <h3>Game Developer - Tessera Studios</h3>
+                        </div>
+                        <span class="date">may. 2016 - oct. 2016 · 6 meses</span>
+                        <ul>
+                            <li>Desarrollo de "Intruders Hide And Seek" - Ganador PlayStation Talents 2016</li>
+                            <li>Programación de IA, UI y mecánicas en realidad virtual</li>
+                            <li>Desarrollo en Unity y Unreal Engine</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="section">
+            <h2>Proyectos Destacados</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*DTn5k1-XaBaiO0y3ZJSRyQ.jpeg" alt="VIPE Platform">
+                    </div>
+                    <div class="project-content">
+                        <h3>VIPE Platform</h3>
+                        <p>Marketplace de Avatares 3D con integración blockchain</p>
+                        <div class="project-technologies">
+                            <span>Angular</span>
+                            <span>Three.js</span>
+                            <span>NestJS</span>
+                            <span>Solidity</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://i.ytimg.com/vi/UjBUxNE7N4w/maxresdefault.jpg" alt="Intruders: Hide and Seek">
+                    </div>
+                    <div class="project-content">
+                        <h3>Intruders: Hide and Seek</h3>
+                        <p>Juego de sigilo en primera persona para PS VR</p>
+                        <div class="project-technologies">
+                            <span>Unreal Engine</span>
+                            <span>C++</span>
+                            <span>VR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://pbs.twimg.com/profile_banners/1189135826980167681/1695047200/600x200" alt="YetiRush">
+                    </div>
+                    <div class="project-content">
+                        <h3>YetiRush</h3>
+                        <p>Juego multijugador de carreras para móvil</p>
+                        <div class="project-technologies">
+                            <span>Unity</span>
+                            <span>Photon</span>
+                            <span>C#</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="images/zizeron.png" alt="Zizeron AI">
+                    </div>
+                    <div class="project-content">
+                        <h3>Zizeron AI</h3>
+                        <p>Plataforma de visualización y análisis de imagen por inteligencia artificial que detecta y alarma sobre diferentes situaciones. Sistema de monitorización en tiempo real con detección de anomalías y alertas automáticas.</p>
+                        <div class="project-technologies">
+                            <span>Python</span>
+                            <span>TensorFlow</span>
+                            <span>OpenCV</span>
+                            <span>React</span>
+                            <span>Node.js</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <h2>Contact</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <a href="https://www.linkedin.com/in/luis-maría-gonzález-pradas-88b946122" target="_blank">LinkedIn</a>
+                    <a href="mailto:your.email@example.com">Email</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Luis María González Pradas. All rights reserved.</p>
+    </footer>
+
+    <button id="exit-3d" class="mode-btn">Exit 3D Mode</button>
+
+    <script src="js/three-scene.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luis Martínez | Full Stack Developer</title>
+    <title>Luis María González | Full Stack Developer</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/orbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
 </head>
 <body>
@@ -21,24 +22,86 @@
 
     <header class="header">
         <nav class="nav">
-            <div class="logo">LMGP</div>
+            <a href="#home" class="logo">LMGP</a>
             <button class="mobile-menu-btn">☰</button>
             <div class="nav-links">
                 <a href="#about">About</a>
+                <a href="#experience">Experience</a>
+                <a href="#skills">Skills</a>
                 <a href="#projects">Projects</a>
                 <a href="#contact">Contact</a>
             </div>
         </nav>
-        <div class="hero">
+        <div id="home" class="hero">
             <div class="hero-content">
-                <h1>Luis Martínez</h1>
+                <h1>Luis María González Pradas</h1>
                 <h2>Full Stack Developer</h2>
                 <p>Passionate about creating innovative web solutions with cutting-edge technologies</p>
                 <div class="mode-buttons">
                     <button class="mode-btn" id="toggle-3d">View in 3D</button>
                 </div>
             </div>
-            <div id="three-container"></div>
+            <div id="three-container" class="three-container">
+                <div class="nav-buttons-container">
+                    <div class="button-group">
+                        <button id="exit-3d">×</button>
+                        <button id="options-3d">OPTIONS</button>
+                    </div>
+                </div>
+                <div class="section-nav-buttons">
+                    <button class="nav-button" data-section="about" onclick="console.log('Click en About'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('about');">
+                        <span class="button-content">
+                            <span>About</span>
+                        </span>
+                    </button>
+                    <button class="nav-button" data-section="skills" onclick="console.log('Click en Skills'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('skills');">
+                        <span class="button-content">
+                            <span>Skills</span>
+                        </span>
+                    </button>
+                    <button class="nav-button" data-section="experience" onclick="console.log('Click en Experience'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('experience');">
+                        <span class="button-content">
+                            <span>Experience</span>
+                        </span>
+                    </button>
+                    <button class="nav-button" data-section="projects" onclick="console.log('Click en Projects'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('projects');">
+                        <span class="button-content">
+                            <span>Projects</span>
+                        </span>
+                    </button>
+                    <button class="nav-button" data-section="contact" onclick="console.log('Click en Contact'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('contact');">
+                        <span class="button-content">
+                            <span>Contact</span>
+                        </span>
+                    </button>
+                </div>
+                
+                <!-- Contenedores para las secciones en modo 3D -->
+                <div id="about-3d-overlay" class="section-3d-overlay">
+                    <button class="close-overlay" onclick="closeSection3DOverlay('about')">×</button>
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+                
+                <div id="skills-3d-overlay" class="section-3d-overlay">
+                    <button class="close-overlay" onclick="closeSection3DOverlay('skills')">×</button>
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+                
+                <div id="experience-3d-overlay" class="section-3d-overlay">
+                    <button class="close-overlay" onclick="closeSection3DOverlay('experience')">×</button>
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+                
+                <div id="projects-3d-overlay" class="section-3d-overlay">
+                    <button class="close-overlay" onclick="closeSection3DOverlay('projects')">×</button>
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+                
+                <div id="contact-3d-overlay" class="section-3d-overlay">
+                    <button class="close-overlay" onclick="closeSection3DOverlay('contact')">×</button>
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+            </div>
             <button class="discover-btn" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
                 <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24">
                     <path d="M12 4L12 20M12 20L5 13M12 20L19 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -53,66 +116,10 @@
             <div class="about-content">
                 <div class="about-text">
                     <p>I am a Full Stack Developer with experience in creating web applications using modern technologies. My focus is on developing efficient, scalable, and user-friendly solutions.</p>
-                    <div class="skills">
-                        <h3>Skills</h3>
-                        <div class="skills-category">
-                            <h4>Languages</h4>
-                            <ul>
-                                <li>TypeScript/JavaScript</li>
-                                <li>Python</li>
-                                <li>Java</li>
-                                <li>C++</li>
-                            </ul>
-                        </div>
-                        <div class="skills-category">
-                            <h4>Frontend</h4>
-                            <ul>
-                                <li>Angular</li>
-                                <li>React</li>
-                                <li>Vue.js</li>
-                                <li>Three.js/WebGL</li>
-                            </ul>
-                        </div>
-                        <div class="skills-category">
-                            <h4>Backend</h4>
-                            <ul>
-                                <li>Node.js</li>
-                                <li>NestJS</li>
-                                <li>MongoDB</li>
-                                <li>SQL</li>
-                            </ul>
-                        </div>
-                        <div class="skills-category">
-                            <h4>Game Dev & 3D</h4>
-                            <ul>
-                                <li>Unity</li>
-                                <li>Unreal Engine</li>
-                                <li>Blender</li>
-                                <li>3D Graphics</li>
-                            </ul>
-                        </div>
-                        <div class="skills-category">
-                            <h4>DevOps & Tools</h4>
-                            <ul>
-                                <li>CI/CD</li>
-                                <li>Jenkins</li>
-                                <li>Android Development</li>
-                                <li>RPA/Automation</li>
-                            </ul>
-                        </div>
-                        <div class="skills-category">
-                            <h4>Blockchain</h4>
-                            <ul>
-                                <li>Solidity</li>
-                                <li>Smart Contracts</li>
-                                <li>Web3</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
-
+        
         <section id="experience" class="section">
             <h2>Professional Experience</h2>
             <div class="timeline">
@@ -175,6 +182,65 @@
                             <li>Development in Unity and Unreal Engine</li>
                         </ul>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="section">
+            <h2>Skills</h2>
+            <div class="skills">
+                <div class="skills-category">
+                    <h4>Languages</h4>
+                    <ul>
+                        <li>TypeScript/JavaScript</li>
+                        <li>Python</li>
+                        <li>Java</li>
+                        <li>C++</li>
+                    </ul>
+                </div>
+                <div class="skills-category">
+                    <h4>Frontend</h4>
+                    <ul>
+                        <li>Angular</li>
+                        <li>React</li>
+                        <li>Vue.js</li>
+                        <li>Three.js/WebGL</li>
+                    </ul>
+                </div>
+                <div class="skills-category">
+                    <h4>Backend</h4>
+                    <ul>
+                        <li>Node.js</li>
+                        <li>NestJS</li>
+                        <li>MongoDB</li>
+                        <li>SQL</li>
+                    </ul>
+                </div>
+                <div class="skills-category">
+                    <h4>Game Dev & 3D</h4>
+                    <ul>
+                        <li>Unity</li>
+                        <li>Unreal Engine</li>
+                        <li>Blender</li>
+                        <li>3D Graphics</li>
+                    </ul>
+                </div>
+                <div class="skills-category">
+                    <h4>DevOps & Tools</h4>
+                    <ul>
+                        <li>CI/CD</li>
+                        <li>Jenkins</li>
+                        <li>Android Development</li>
+                        <li>RPA/Automation</li>
+                    </ul>
+                </div>
+                <div class="skills-category">
+                    <h4>Blockchain</h4>
+                    <ul>
+                        <li>Solidity</li>
+                        <li>Smart Contracts</li>
+                        <li>Web3</li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -259,13 +325,13 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Luis Martínez. All rights reserved.</p>
+        <p>&copy; 2024 Luis María González Pradas. All rights reserved.</p>
     </footer>
 
-    <button id="exit-3d" class="mode-btn">Exit 3D Mode</button>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/orbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
     <script src="js/three-scene.js"></script>
-    <script src="js/animations.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html> 

@@ -370,6 +370,13 @@ class ThreeScene {
 
     setMode(mode, duration = 1000) {
         const targetZ = mode === 'fullscreen' ? this.cameraPositions.fullscreen.z : this.cameraPositions.normal.z;
+        
+        // Si estamos saliendo del modo fullscreen, primero restaurar la orientación
+        if (mode === 'normal') {
+            this.camera.position.set(0, 0, this.camera.position.z);
+            this.camera.lookAt(0, 0, 0);
+        }
+        
         this.animateCamera(targetZ, duration);
         
         // Esperar a que termine la animación y luego actualizar el tamaño
@@ -402,19 +409,51 @@ class ThreeScene {
     }
 
     resetScene() {
-        // Resetear la posición de la cámara
-        this.camera.position.set(0, 0, 20);
+        // Resetear la posición y orientación de la cámara
+        this.camera.position.set(0, 0, this.cameraPositions.normal.z);
         this.camera.lookAt(0, 0, 0);
         
         // Resetear la rotación del planeta
-        this.planet.rotation.y = 0;
+        if (this.planet) {
+            this.planet.rotation.y = 0;
+        }
         
-        // Resetear los targets
+        // Resetear los targets y estado de movimiento
         this.currentTarget = null;
         this.isMovingToTarget = false;
         
-        // Cerrar todas las secciones
-        this.hideAllSectionOverlays();
+        // Cerrar todas las secciones y asegurar que el contenido esté en su lugar original
+        const sections = ['about', 'skills', 'experience', 'projects', 'contact'];
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            const overlay = document.getElementById(`${sectionId}-3d-overlay`);
+            
+            if (section && overlay) {
+                // Si hay contenido en el overlay, moverlo de vuelta a la sección original
+                const content = overlay.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
+                if (content) {
+                    section.appendChild(content);
+                }
+                
+                // Limpiar y ocultar el overlay
+                overlay.innerHTML = '';
+                overlay.style.display = 'none';
+                overlay.classList.remove('active');
+            }
+        });
+        
+        // Quitar la marca del contenedor 3D
+        this.container.classList.remove('has-active-section');
+        
+        // Restaurar el scroll del documento
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        
+        // Forzar un reflow para asegurar que los cambios se aplican
+        this.container.offsetHeight;
+        
+        // Actualizar el renderer
+        this.handleResize();
     }
 
     createTextTexture(text) {
@@ -472,18 +511,12 @@ class ThreeScene {
 
     // Método para mostrar la sección correspondiente
     showSectionOverlay(section) {
-        // Obtener el contenido de la sección original
+        // Obtener la sección original y el overlay
         const originalSection = document.getElementById(section);
-        if (!originalSection) return;
-        
-        // Obtener el overlay correspondiente
         const overlay = document.getElementById(`${section}-3d-overlay`);
-        if (!overlay) return;
+        if (!originalSection || !overlay) return;
         
-        // Clonar el contenido de la sección original
-        const content = originalSection.cloneNode(true);
-        
-        // Limpiar el overlay y añadir el nuevo contenido
+        // Limpiar el overlay
         overlay.innerHTML = '';
         
         // Añadir el botón de cierre
@@ -493,14 +526,19 @@ class ThreeScene {
         closeButton.onclick = () => this.hideSectionOverlay(section);
         overlay.appendChild(closeButton);
         
-        // Añadir el contenido clonado
-        overlay.appendChild(content);
+        // Clonar el contenido principal de la sección al overlay
+        const content = originalSection.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
+        if (content) {
+            const clonedContent = content.cloneNode(true);
+            overlay.appendChild(clonedContent);
+        }
         
         // Marcar el contenedor 3D
         this.container.classList.add('has-active-section');
         
         // Mostrar el overlay
         overlay.classList.add('active');
+        overlay.style.display = 'block';
     }
     
     // Método para hacer zoom out desde un panel
@@ -567,6 +605,7 @@ class ThreeScene {
         
         // Ocultar el overlay
         overlay.classList.remove('active');
+        overlay.style.display = 'none';
         
         // Quitar la marca del contenedor 3D
         this.container.classList.remove('has-active-section');
@@ -583,16 +622,28 @@ class ThreeScene {
         overlays.forEach(overlay => {
             if (overlay.classList.contains('active')) {
                 wasAnyActive = true;
+                
+                // Ocultar el overlay
                 overlay.classList.remove('active');
+                overlay.style.display = 'none';
             }
         });
         
         // Quitar la marca del contenedor 3D
         this.container.classList.remove('has-active-section');
         
-        // Si había alguna sección activa, hacer zoom out
+        // Si había alguna sección activa, hacer zoom out y restaurar la cámara
         if (wasAnyActive && this.currentTarget) {
-            this.zoomOutFromPanel();
+            // Detener cualquier animación en curso
+            this.isMovingToTarget = false;
+            
+            // Restaurar la posición y orientación de la cámara
+            const normalDistance = this.cameraPositions.normal.z;
+            this.camera.position.set(0, 0, normalDistance);
+            this.camera.lookAt(0, 0, 0);
+            
+            // Resetear el target actual
+            this.currentTarget = null;
         }
     }
 }
@@ -605,30 +656,111 @@ window.addEventListener('load', () => {
     const enter3dBtn = document.getElementById('toggle-3d');
     const exit3dBtn = document.getElementById('exit-3d');
     const threeContainer = document.getElementById('three-container');
+    const discoverBtn = document.querySelector('.discover-btn');
+    
+    // Función para manejar la navegación en modo 3D
+    const handle3DNavigation = (e, section) => {
+        if (threeContainer.classList.contains('fullscreen') && scene.targets[section]) {
+            e.preventDefault();
+            e.stopPropagation();
+            scene.moveToTarget(section);
+            return true;
+        }
+        return false;
+    };
+    
+    // Función para cerrar una sección en modo 3D
+    const closeSection3DOverlay = (section) => {
+        const overlay = document.getElementById(`${section}-3d-overlay`);
+        const originalSection = document.getElementById(section);
+        if (!overlay || !originalSection) return;
+        
+        // Mover el contenido de vuelta a la sección original
+        const content = overlay.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
+        if (content) {
+            originalSection.appendChild(content);
+        }
+        
+        // Ocultar el overlay
+        overlay.classList.remove('active');
+        overlay.style.display = 'none';
+        
+        // Hacer zoom out para volver a la vista orbital
+        scene.zoomOutFromPanel();
+    };
     
     enter3dBtn.addEventListener('click', () => {
         scene.resetScene();  // Resetear todo antes de entrar
         scene.setMode('fullscreen');
+        // Deshabilitar el scroll cuando entramos en modo 3D
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
     });
     
     exit3dBtn.addEventListener('click', () => {
         scene.setMode('normal');
         scene.resetScene();  // Resetear todo al salir
+        // Restaurar el scroll cuando salimos del modo 3D
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
     });
 
-    // Add event listeners for section navigation
+    // Manejar eventos de navegación
     document.querySelectorAll('.section-nav-buttons .nav-button').forEach(button => {
-        // Prevenir el comportamiento por defecto en modo 3D
+        const section = button.dataset.section;
+        if (!section) return;
+        
+        // Remover onclick inline handlers
+        button.removeAttribute('onclick');
+        
+        // Añadir event listener
         button.addEventListener('click', (e) => {
-            const section = button.dataset.section;
-            if (section && scene.targets[section]) {
-                if (threeContainer.classList.contains('fullscreen')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    scene.moveToTarget(section);
-                    return false;
+            if (handle3DNavigation(e, section)) {
+                if (window.closeOptionsMenu) {
+                    window.closeOptionsMenu();
                 }
             }
-        }, true); // Usar capture phase para asegurar que se ejecuta antes que otros handlers
+        }, true);
     });
+    
+    // Manejar eventos de navegación normal
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const section = this.getAttribute('href').substring(1);
+            
+            // Si estamos en modo 3D y es una sección válida, usar navegación 3D
+            if (handle3DNavigation(e, section)) {
+                return;
+            }
+            
+            // Si no estamos en modo 3D o no es una sección 3D, usar scroll suave
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Añadir event listeners para los botones de cierre
+    document.querySelectorAll('.section-3d-overlay .close-overlay').forEach(button => {
+        const overlay = button.closest('.section-3d-overlay');
+        if (!overlay) return;
+        
+        const section = overlay.id.replace('-3d-overlay', '');
+        button.addEventListener('click', () => closeSection3DOverlay(section));
+    });
+    
+    // Añadir event listener para el botón discover
+    if (discoverBtn) {
+        discoverBtn.addEventListener('click', () => {
+            const aboutSection = document.getElementById('about');
+            if (aboutSection) {
+                aboutSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    }
 }); 

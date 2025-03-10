@@ -2,9 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove loader after initial presentation
     setTimeout(() => {
         const loader = document.querySelector('.loader');
+        const nav = document.querySelector('.nav');
         loader.classList.add('fade-out');
         setTimeout(() => {
             loader.style.display = 'none';
+            nav.classList.add('loaded');
         }, 500);
     }, 1000);
 
@@ -167,6 +169,36 @@ document.addEventListener('DOMContentLoaded', () => {
         
         is3DMode = false;
         isOptionsOpen = false;
+
+        // Restaurar la visibilidad y el contenido de todas las secciones
+        const sections = ['about', 'skills', 'experience', 'projects', 'contact'];
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            const overlay = document.getElementById(`${sectionId}-3d-overlay`);
+            
+            if (section && overlay) {
+                // Asegurarse de que la sección original esté visible y tenga su contenido
+                section.style.display = 'flex';
+                section.style.visibility = 'visible';
+                section.style.opacity = '1';
+                
+                // Si el overlay tiene contenido clonado, devolverlo a la sección original
+                const content = overlay.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
+                if (content) {
+                    const originalContent = section.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
+                    if (originalContent) {
+                        section.replaceChild(content, originalContent);
+                    }
+                }
+                
+                // Limpiar y ocultar el overlay
+                overlay.innerHTML = '';
+                overlay.style.display = 'none';
+                overlay.classList.remove('active');
+            }
+        });
+
+        // Restaurar la visibilidad de los elementos principales
         mainContent.style.display = 'block';
         nav.style.display = 'flex';
         heroContent.style.display = 'block';
@@ -184,8 +216,35 @@ document.addEventListener('DOMContentLoaded', () => {
             // Forzar un redimensionamiento después de que se complete la transición
             setTimeout(() => {
                 window.threeScene.handleResize();
+                
+                // Reinicializar los event listeners de navegación suave
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.removeEventListener('click', smoothScrollHandler);
+                    anchor.addEventListener('click', smoothScrollHandler);
+                });
+
+                // Asegurarse de que el scroll funcione correctamente
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
             }, 100);
         }
+    });
+
+    // Definir el manejador de scroll suave como una función separada
+    const smoothScrollHandler = function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    };
+
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', smoothScrollHandler);
     });
 
     // Add section navigation functionality

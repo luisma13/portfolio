@@ -20,27 +20,21 @@
         </div>
     </div>
 
+    <nav class="nav">
+        <a href="#home" class="logo">LMGP</a>
+        <button class="mobile-menu-btn">☰</button>
+        <div class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
     <header class="header">
-        <nav class="nav">
-            <a href="#home" class="logo">LMGP</a>
-            <button class="mobile-menu-btn">☰</button>
-            <div class="nav-links">
-                <a href="#about">About</a>
-                <a href="#experience">Experience</a>
-                <a href="#skills">Skills</a>
-                <a href="#projects">Projects</a>
-                <a href="#contact">Contact</a>
-            </div>
-        </nav>
-        <div id="home" class="hero">
-            <div class="hero-content">
-                <h1>Luis María González Pradas</h1>
-                <h2>Full Stack Developer</h2>
-                <p>Passionate about creating innovative web solutions with cutting-edge technologies</p>
-                <div class="mode-buttons">
-                    <button class="mode-btn" id="toggle-3d">View in 3D</button>
-                </div>
-            </div>
+        <div id="home" class="home-background">
             <div id="three-container" class="three-container">
                 <div class="nav-buttons-container">
                     <div class="button-group">
@@ -49,27 +43,27 @@
                     </div>
                 </div>
                 <div class="section-nav-buttons">
-                    <button class="nav-button" data-section="about" onclick="console.log('Click en About'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('about');">
+                    <button class="nav-button" data-section="about">
                         <span class="button-content">
                             <span>About</span>
                         </span>
                     </button>
-                    <button class="nav-button" data-section="skills" onclick="console.log('Click en Skills'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('skills');">
+                    <button class="nav-button" data-section="skills">
                         <span class="button-content">
                             <span>Skills</span>
                         </span>
                     </button>
-                    <button class="nav-button" data-section="experience" onclick="console.log('Click en Experience'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('experience');">
+                    <button class="nav-button" data-section="experience">
                         <span class="button-content">
                             <span>Experience</span>
                         </span>
                     </button>
-                    <button class="nav-button" data-section="projects" onclick="console.log('Click en Projects'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('projects');">
+                    <button class="nav-button" data-section="projects">
                         <span class="button-content">
                             <span>Projects</span>
                         </span>
                     </button>
-                    <button class="nav-button" data-section="contact" onclick="console.log('Click en Contact'); closeOptionsMenu(); if(window.threeScene) window.threeScene.moveToTarget('contact');">
+                    <button class="nav-button" data-section="contact">
                         <span class="button-content">
                             <span>Contact</span>
                         </span>
@@ -78,28 +72,36 @@
                 
                 <!-- Contenedores para las secciones en modo 3D -->
                 <div id="about-3d-overlay" class="section-3d-overlay">
-                    <button class="close-overlay" onclick="closeSection3DOverlay('about')">×</button>
-                    <!-- El contenido se cargará dinámicamente -->
+                    <button class="close-overlay">×</button>
                 </div>
                 
                 <div id="skills-3d-overlay" class="section-3d-overlay">
-                    <button class="close-overlay" onclick="closeSection3DOverlay('skills')">×</button>
-                    <!-- El contenido se cargará dinámicamente -->
+                    <button class="close-overlay">×</button>
                 </div>
                 
                 <div id="experience-3d-overlay" class="section-3d-overlay">
-                    <button class="close-overlay" onclick="closeSection3DOverlay('experience')">×</button>
-                    <!-- El contenido se cargará dinámicamente -->
+                    <button class="close-overlay">×</button>
                 </div>
                 
                 <div id="projects-3d-overlay" class="section-3d-overlay">
-                    <button class="close-overlay" onclick="closeSection3DOverlay('projects')">×</button>
-                    <!-- El contenido se cargará dinámicamente -->
+                    <button class="close-overlay">×</button>
                 </div>
                 
                 <div id="contact-3d-overlay" class="section-3d-overlay">
-                    <button class="close-overlay" onclick="closeSection3DOverlay('contact')">×</button>
-                    <!-- El contenido se cargará dinámicamente -->
+                    <button class="close-overlay">×</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="section hero-section">
+            <div class="hero-content">
+                <h1>Luis María González Pradas</h1>
+                <h2>Full Stack Developer</h2>
+                <p>Passionate about creating innovative web solutions with cutting-edge technologies</p>
+                <div class="mode-buttons">
+                    <button class="mode-btn" id="toggle-3d">View in 3D</button>
                 </div>
             </div>
             <button class="discover-btn" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
@@ -107,10 +109,8 @@
                     <path d="M12 4L12 20M12 20L5 13M12 20L19 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                 </svg>
             </button>
-        </div>
-    </header>
+        </section>
 
-    <main>
         <section id="about" class="section" style="margin-top: 4rem;">
             <h2>About Me</h2>
             <div class="about-content">

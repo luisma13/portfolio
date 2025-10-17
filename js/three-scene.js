@@ -1,29 +1,39 @@
+/**
+ * ThreeScene - Gestión de escena 3D con Three.js
+ * Responsabilidades: Renderizado, animación, cámara, objetos 3D
+ */
 class ThreeScene {
     constructor() {
         this.container = document.getElementById('three-container');
         this.scene = new THREE.Scene();
         
         // Get container dimensions
-        const container = this.container;
-        const width = container.clientWidth;
-        const height = container.clientHeight;
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
         
         // Create camera with wider field of view
         this.camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
         
-        // Define camera positions for different modes
-        this.cameraPositions = {
+        // Camera positions from config
+        this.cameraPositions = window.PortfolioConfig?.three?.cameraPositions || {
             normal: { z: 50 },
             fullscreen: { z: 25 }
         };
 
-        // Define targets for different sections with their positions (en el ecuador)
-        this.targets = {
-            'about': { angle: 0 },                    // 0°
-            'skills': { angle: (2 * Math.PI) / 5 },   // 72°
-            'experience': { angle: (4 * Math.PI) / 5 }, // 144°
-            'projects': { angle: (6 * Math.PI) / 5 },  // 216°
-            'contact': { angle: (8 * Math.PI) / 5 }    // 288°
+        // Targets from config
+        this.targets = window.PortfolioConfig?.three?.targets || {
+            'about': { angle: 0 },
+            'skills': { angle: (2 * Math.PI) / 5 },
+            'experience': { angle: (4 * Math.PI) / 5 },
+            'projects': { angle: (6 * Math.PI) / 5 },
+            'contact': { angle: (8 * Math.PI) / 5 }
+        };
+
+        // Animation config
+        this.animationDurations = window.PortfolioConfig?.three?.animationDurations || {
+            cameraTransition: 1000,
+            sectionTransition: 1500,
+            zoomOut: 800
         };
 
         this.renderer = new THREE.WebGLRenderer({ 
@@ -61,16 +71,26 @@ class ThreeScene {
     }
 
     init() {
+        // Planet configuration
+        const planetConfig = window.PortfolioConfig?.three?.planet || {
+            radius: 5,
+            wireframeColor: 0x00f7ff,
+            segments: 32
+        };
+
         // Create planet
-        const planetRadius = 5;
-        const planetGeometry = new THREE.SphereGeometry(planetRadius, 32, 32);
+        const planetGeometry = new THREE.SphereGeometry(
+            planetConfig.radius,
+            planetConfig.segments,
+            planetConfig.segments
+        );
         
-        // Crear material wireframe con el color #00f7ff
+        // Create wireframe material
         const planetMaterial = new THREE.MeshPhongMaterial({
-            color: 0x00f7ff,  // Color azul cian
+            color: planetConfig.wireframeColor,
             wireframe: true,
             wireframeLinewidth: 1,
-            emissive: 0x00f7ff,
+            emissive: planetConfig.wireframeColor,
             emissiveIntensity: 0.2
         });
 
@@ -90,33 +110,39 @@ class ThreeScene {
                 new THREE.MeshBasicMaterial({
                     map: texture,
                     transparent: true,
-                    opacity: 1.0, // Opacidad completa para el texto
-                    side: THREE.DoubleSide, // Visible desde ambos lados
-                    depthWrite: false, // Ayuda con la transparencia
-                    alphaTest: 0.1 // Solo renderiza píxeles con alpha > 0.1 (el texto)
+                    opacity: 1.0,
+                    side: THREE.DoubleSide,
+                    depthWrite: false,
+                    alphaTest: 0.1
                 })
             );
             
-            // Posicionar el panel en el ecuador del planeta
-            const radius = planetRadius + 0.5;
+            // Position panel on planet's equator
+            const radius = planetConfig.radius + 0.5;
             panel.position.x = Math.cos(position.angle) * radius;
             panel.position.z = Math.sin(position.angle) * radius;
             
-            // Hacer que el panel mire hacia afuera
+            // Make panel look outward
             panel.lookAt(0, 0, 0);
-            panel.rotateY(Math.PI); // Girar el panel para que el texto mire hacia afuera
+            panel.rotateY(Math.PI);
             
             this.planet.add(panel);
             this.panels[section] = panel;
         });
 
         // Create starfield
+        const starfieldConfig = window.PortfolioConfig?.three?.starfield || {
+            count: 2000,
+            minRadius: 20,
+            maxRadius: 50
+        };
+
         const starGeometry = new THREE.BufferGeometry();
-        const starCount = 2000;
-        const positions = new Float32Array(starCount * 3);
+        const positions = new Float32Array(starfieldConfig.count * 3);
         
-        for (let i = 0; i < starCount * 3; i += 3) {
-            const radius = 20 + Math.random() * 30;
+        for (let i = 0; i < starfieldConfig.count * 3; i += 3) {
+            const radius = starfieldConfig.minRadius + 
+                Math.random() * (starfieldConfig.maxRadius - starfieldConfig.minRadius);
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos((Math.random() * 2) - 1);
             
@@ -151,8 +177,15 @@ class ThreeScene {
         this.currentTarget = null;
         this.isMovingToTarget = false;
 
-        // Crear la luna
-        const moonGeometry = new THREE.IcosahedronGeometry(2, 2);
+        // Create moon
+        const moonConfig = window.PortfolioConfig?.three?.moon || {
+            size: 2,
+            orbitRadius: 15,
+            orbitHeight: 5,
+            orbitSpeed: 0.0005
+        };
+
+        const moonGeometry = new THREE.IcosahedronGeometry(moonConfig.size, 2);
         const moonMaterial = new THREE.MeshBasicMaterial({
             color: '#00f7ff',
             wireframe: true,
@@ -160,6 +193,7 @@ class ThreeScene {
             opacity: 0.8
         });
         this.moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        this.moonConfig = moonConfig;
         this.scene.add(this.moon);
     }
 
@@ -175,17 +209,15 @@ class ThreeScene {
         this.starfield.rotation.x += 0.0002;
         this.starfield.rotation.y += 0.0002;
 
-        // Rotar la luna alrededor del planeta
-        if (this.moon) {
-            const time = Date.now() * 0.0005; // Velocidad de rotación
-            const radius = 15; // Radio de la órbita
-            const height = 5; // Altura de la órbita (para hacerla diagonal)
+        // Rotate moon around planet
+        if (this.moon && this.moonConfig) {
+            const time = Date.now() * this.moonConfig.orbitSpeed;
             
-            this.moon.position.x = Math.cos(time) * radius;
-            this.moon.position.y = Math.sin(time) * height;
-            this.moon.position.z = Math.sin(time) * radius;
+            this.moon.position.x = Math.cos(time) * this.moonConfig.orbitRadius;
+            this.moon.position.y = Math.sin(time) * this.moonConfig.orbitHeight;
+            this.moon.position.z = Math.sin(time) * this.moonConfig.orbitRadius;
             
-            // Hacer que la luna mire al planeta
+            // Make moon look at planet
             this.moon.lookAt(0, 0, 0);
         }
 
@@ -214,8 +246,13 @@ class ThreeScene {
         this.renderer.render(this.scene, this.camera);
     }
 
-    moveToTarget(section, duration = 1500) {
-        // Si ya estamos en el target actual, no hacer nada
+    moveToTarget(section, duration) {
+        // Use config duration if not provided
+        if (!duration) {
+            duration = this.animationDurations.sectionTransition || 1500;
+        }
+
+        // If already at target, do nothing
         if (this.currentTarget === section) return;
         
         if (this.isMovingToTarget) return;
@@ -368,10 +405,17 @@ class ThreeScene {
         this.renderer.render(this.scene, this.camera);
     }
 
-    setMode(mode, duration = 1000) {
-        const targetZ = mode === 'fullscreen' ? this.cameraPositions.fullscreen.z : this.cameraPositions.normal.z;
+    setMode(mode, duration) {
+        // Use config duration if not provided
+        if (!duration) {
+            duration = this.animationDurations.cameraTransition || 1000;
+        }
+
+        const targetZ = mode === 'fullscreen' 
+            ? this.cameraPositions.fullscreen.z 
+            : this.cameraPositions.normal.z;
         
-        // Si estamos saliendo del modo fullscreen, primero restaurar la orientación
+        // Restore orientation when exiting fullscreen
         if (mode === 'normal') {
             this.camera.position.set(0, 0, this.camera.position.z);
             this.camera.lookAt(0, 0, 0);
@@ -379,7 +423,7 @@ class ThreeScene {
         
         this.animateCamera(targetZ, duration);
         
-        // Esperar a que termine la animación y luego actualizar el tamaño
+        // Wait for animation to complete then resize
         setTimeout(() => {
             this.handleResize();
         }, duration + 50);
@@ -541,8 +585,13 @@ class ThreeScene {
         overlay.style.display = 'block';
     }
     
-    // Método para hacer zoom out desde un panel
-    zoomOutFromPanel(duration = 800) {
+    // Method to zoom out from a panel
+    zoomOutFromPanel(duration) {
+        // Use config duration if not provided
+        if (!duration) {
+            duration = this.animationDurations.zoomOut || 800;
+        }
+
         if (!this.currentTarget || this.isMovingToTarget) return;
         
         const panel = this.panels[this.currentTarget];
@@ -648,119 +697,11 @@ class ThreeScene {
     }
 }
 
-// Initialize the scene when the page loads
-window.addEventListener('load', () => {
-    const scene = new ThreeScene();
-    window.threeScene = scene;
-    
-    const enter3dBtn = document.getElementById('toggle-3d');
-    const exit3dBtn = document.getElementById('exit-3d');
-    const threeContainer = document.getElementById('three-container');
-    const discoverBtn = document.querySelector('.discover-btn');
-    
-    // Función para manejar la navegación en modo 3D
-    const handle3DNavigation = (e, section) => {
-        if (threeContainer.classList.contains('fullscreen') && scene.targets[section]) {
-            e.preventDefault();
-            e.stopPropagation();
-            scene.moveToTarget(section);
-            return true;
-        }
-        return false;
-    };
-    
-    // Función para cerrar una sección en modo 3D
-    const closeSection3DOverlay = (section) => {
-        const overlay = document.getElementById(`${section}-3d-overlay`);
-        const originalSection = document.getElementById(section);
-        if (!overlay || !originalSection) return;
-        
-        // Mover el contenido de vuelta a la sección original
-        const content = overlay.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
-        if (content) {
-            originalSection.appendChild(content);
-        }
-        
-        // Ocultar el overlay
-        overlay.classList.remove('active');
-        overlay.style.display = 'none';
-        
-        // Hacer zoom out para volver a la vista orbital
-        scene.zoomOutFromPanel();
-    };
-    
-    enter3dBtn.addEventListener('click', () => {
-        scene.resetScene();  // Resetear todo antes de entrar
-        scene.setMode('fullscreen');
-        // Deshabilitar el scroll cuando entramos en modo 3D
-        document.body.style.overflow = 'hidden';
-        document.documentElement.style.overflow = 'hidden';
-    });
-    
-    exit3dBtn.addEventListener('click', () => {
-        scene.setMode('normal');
-        scene.resetScene();  // Resetear todo al salir
-        // Restaurar el scroll cuando salimos del modo 3D
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
-    });
+// Exponer la clase globalmente para que app.js pueda usarla
+window.ThreeScene = ThreeScene;
 
-    // Manejar eventos de navegación
-    document.querySelectorAll('.section-nav-buttons .nav-button').forEach(button => {
-        const section = button.dataset.section;
-        if (!section) return;
-        
-        // Remover onclick inline handlers
-        button.removeAttribute('onclick');
-        
-        // Añadir event listener
-        button.addEventListener('click', (e) => {
-            if (handle3DNavigation(e, section)) {
-                if (window.closeOptionsMenu) {
-                    window.closeOptionsMenu();
-                }
-            }
-        }, true);
-    });
-    
-    // Manejar eventos de navegación normal
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const section = this.getAttribute('href').substring(1);
-            
-            // Si estamos en modo 3D y es una sección válida, usar navegación 3D
-            if (handle3DNavigation(e, section)) {
-                return;
-            }
-            
-            // Si no estamos en modo 3D o no es una sección 3D, usar scroll suave
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-    
-    // Añadir event listeners para los botones de cierre
-    document.querySelectorAll('.section-3d-overlay .close-overlay').forEach(button => {
-        const overlay = button.closest('.section-3d-overlay');
-        if (!overlay) return;
-        
-        const section = overlay.id.replace('-3d-overlay', '');
-        button.addEventListener('click', () => closeSection3DOverlay(section));
-    });
-    
-    // Añadir event listener para el botón discover
-    if (discoverBtn) {
-        discoverBtn.addEventListener('click', () => {
-            const aboutSection = document.getElementById('about');
-            if (aboutSection) {
-                aboutSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-    }
+// Initialize the scene when the page loads
+// Note: Los event listeners ahora son manejados por ThreeModule y NavigationModule
+window.addEventListener('load', () => {
+    console.log('✓ ThreeScene loaded and ready');
 }); 

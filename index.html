@@ -24,12 +24,15 @@
         <a href="#home" class="logo">LMGP</a>
         <button class="mobile-menu-btn">☰</button>
         <div class="nav-links">
-            <a href="#hero">Home</a>
-            <a href="#about">About</a>
-            <a href="#experience">Experience</a>
-            <a href="#skills">Skills</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
+            <a href="#hero" data-i18n="nav.home">Home</a>
+            <a href="#about" data-i18n="nav.about">About</a>
+            <a href="#experience" data-i18n="nav.experience">Experience</a>
+            <a href="#skills" data-i18n="nav.skills">Skills</a>
+            <a href="#projects" data-i18n="nav.projects">Projects</a>
+            <a href="#contact" data-i18n="nav.contact">Contact</a>
+            <button id="language-toggle" class="language-toggle" aria-label="Toggle language">
+                <span class="lang-icon">EN</span>
+            </button>
         </div>
     </nav>
 
@@ -97,14 +100,14 @@
     <main>
         <section id="hero" class="section hero-section">
             <div class="hero-content">
-                <h1>Luis María González Pradas</h1>
-                <h2>Full Stack Developer</h2>
-                <p>Passionate about creating innovative web solutions with cutting-edge technologies</p>
+                <h1 data-i18n="hero.name">Luis María González Pradas</h1>
+                <h2 data-i18n="hero.title">Senior Full-Stack Developer | Tech Lead</h2>
+                <p data-i18n="hero.subtitle">Specialized in scalable end-to-end architectures with 10 years of experience</p>
                 <div class="mode-buttons">
-                    <button class="mode-btn" id="toggle-3d">View in 3D</button>
+                    <button class="mode-btn" id="toggle-3d" data-i18n="hero.view3D">View in 3D</button>
                 </div>
             </div>
-            <button class="discover-btn" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
+            <button class="discover-btn" aria-label="Scroll down">
                 <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24">
                     <path d="M12 4L12 20M12 20L5 13M12 20L19 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                 </svg>
@@ -112,29 +115,45 @@
         </section>
 
         <section id="about" class="section" style="margin-top: 4rem;">
-            <h2>About Me</h2>
+            <h2 data-i18n="about.title">About Me</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p>I am a Full Stack Developer with experience in creating web applications using modern technologies. My focus is on developing efficient, scalable, and user-friendly solutions.</p>
+                    <p>Full-stack developer with <strong>10 years of experience</strong>, specialized in scalable end-to-end architectures. Frontend: Angular, RxJS, ThreeJS/WebGL with 60fps 3D rendering. Backend: NestJS with hexagonal architecture, authentication/authorization (OAuth2, API keys), async queues (BullJS/Redis), REST APIs and monitoring (Grafana). I have developed SDKs with custom authentication, implemented CI/CD and led technical teams.</p>
                 </div>
             </div>
         </section>
         
         <section id="experience" class="section">
-            <h2>Professional Experience</h2>
+            <h2 data-i18n="experience.title">Professional Experience</h2>
             <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Full-Stack Developer - <strong>Freelance</strong></h3>
+                        <span class="date">Aug 2024 - Present | Remote</span>
+                        <ul>
+                            <li><strong>Social App for NGOs (Swiss Client):</strong> Ionic/Angular mobile app + NestJS backend. Matching system, messaging and event management</li>
+                            <li><strong>3D Sofa Configurator (Real Estate):</strong> Angular web with Unity viewer (WebGL). Modular configurator, Angular-Unity communication, quote generation</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="timeline-item">
                     <div class="timeline-content">
                         <div class="company-header">
                             <img src="images/polygonal_mind_logo.jpg" alt="Polygonal Mind Logo" class="company-logo">
                             <h3>Tech Lead - Polygonal Mind</h3>
                         </div>
-                        <span class="date">Jul 2021 - Jul 2024 · 3 years 1 month</span>
+                        <span class="date">Jul 2021 - Aug 2024 | Zaragoza, Spain</span>
                         <ul>
-                            <li>Technical leadership and development of the VIPE platform (3D Avatar Marketplace)</li>
-                            <li>Development with Angular, NestJS, ThreeJS, MongoDB, Jenkins and smart contracts</li>
-                            <li>Development of SDKs in JavaScript, Unity and Unreal for avatar interoperability</li>
-                            <li>3D process automation with Blender API for humanoid avatar generation</li>
+                            <li>Design and implementation of <strong>VIPE</strong> (<a href="https://vipe.io" target="_blank" rel="noopener">vipe.io</a>), 3D avatar ecosystem with marketplace and real-time rendering</li>
+                            <li>Angular app with optimized ThreeJS (60fps), standalone components, signals and RxJS. Code splitting and lazy loading</li>
+                            <li>NestJS backend with hexagonal/DDD architecture, async queues (BullJS/Redis) for 3D processing</li>
+                            <li>Authentication system: OAuth2 (Google, Discord), custom OAuth for SDKs, API key management and role-based permissions</li>
+                            <li>Testing: Jest (unit), Selenium (E2E). Complete dockerization. CI/CD with Jenkins</li>
+                            <li>Observability: Grafana + Loki for logs, error analysis and system monitoring</li>
+                            <li>Cross-platform SDKs (JavaScript, Unity C#, Unreal C++) with documentation</li>
+                            <li>Blender Python API automation for avatar generation</li>
+                            <li>Team coordination of 11 people, code reviews and pair programming</li>
                         </ul>
                     </div>
                 </div>
@@ -143,13 +162,12 @@
                     <div class="timeline-content">
                         <div class="company-header">
                             <img src="images/espublico_tech_logo.jpg" alt="esPublico Logo" class="company-logo">
-                            <h3>Senior Java Developer - esPublico Technology</h3>
+                            <h3>Senior Java Developer - esPublico Tecnología</h3>
                         </div>
-                        <span class="date">Dec 2019 - Jul 2021 · 1 year 8 months</span>
+                        <span class="date">Dec 2019 - May 2021 | Zaragoza, Spain</span>
                         <ul>
-                            <li>Robotic Process Automation (RPA) department</li>
-                            <li>Development of integrations and APIs</li>
-                            <li>Java desktop applications</li>
+                            <li>RPA solutions for administrative workflow automation</li>
+                            <li>API integrations and Java desktop applications</li>
                         </ul>
                     </div>
                 </div>
@@ -160,11 +178,10 @@
                             <img src="images/meduxjpg.jpg" alt="MedUX Logo" class="company-logo">
                             <h3>Android Developer - MedUX</h3>
                         </div>
-                        <span class="date">Nov 2016 - Jul 2019 · 2 years 9 months</span>
+                        <span class="date">Nov 2016 - Jul 2019 | Madrid, Spain</span>
                         <ul>
-                            <li>Android development for fixed and mobile network quality measurement</li>
-                            <li>Implementation with Java, Dagger2, REST API, MongoDB</li>
-                            <li>Unit tests and robotic process automation (RPA)</li>
+                            <li>App for telecom operators for network quality measurement</li>
+                            <li>Automated testing with Selenium</li>
                         </ul>
                     </div>
                 </div>
@@ -175,11 +192,10 @@
                             <img src="images/tesserajpg.jpg" alt="Tessera Studios Logo" class="company-logo">
                             <h3>Game Developer - Tessera Studios</h3>
                         </div>
-                        <span class="date">May 2016 - Oct 2016 · 6 months</span>
+                        <span class="date">May 2016 - Dec 2016 | Madrid, Spain</span>
                         <ul>
-                            <li>Development of "Intruders Hide And Seek" - PlayStation Talents 2016 Winner</li>
-                            <li>AI, UI and VR mechanics programming</li>
-                            <li>Development in Unity and Unreal Engine</li>
+                            <li><strong>Intruders: Hide and Seek</strong> - Winner "Best Game for Press" PlayStation Talents 2016</li>
+                            <li>VR mechanics, AI and UI programming in C++/Unreal Engine</li>
                         </ul>
                     </div>
                 </div>
@@ -187,66 +203,87 @@
         </section>
 
         <section id="skills" class="section">
-            <h2>Skills</h2>
+            <h2 data-i18n="skills.title">Technical Stack</h2>
             <div class="skills">
                 <div class="skills-category">
-                    <h4>Languages</h4>
+                    <h4 data-i18n="skills.categories.frontend.title">Frontend</h4>
                     <ul>
-                        <li>TypeScript/JavaScript</li>
-                        <li>Python</li>
-                        <li>Java</li>
-                        <li>C++</li>
+                        <li>Angular (v2-20)</li>
+                        <li>Next.js</li>
+                        <li>TypeScript</li>
+                        <li>RxJS</li>
+                        <li>Signals</li>
+                        <li>Angular Material</li>
+                        <li>Ionic</li>
+                        <li>ThreeJS/WebGL</li>
+                        <li>NgRx</li>
                     </ul>
                 </div>
                 <div class="skills-category">
-                    <h4>Frontend</h4>
+                    <h4 data-i18n="skills.categories.backend.title">Backend</h4>
                     <ul>
-                        <li>Angular</li>
-                        <li>React</li>
-                        <li>Vue.js</li>
-                        <li>Three.js/WebGL</li>
-                    </ul>
-                </div>
-                <div class="skills-category">
-                    <h4>Backend</h4>
-                    <ul>
-                        <li>Node.js</li>
                         <li>NestJS</li>
+                        <li>Node.js</li>
+                        <li>Java</li>
+                        <li>Python</li>
+                        <li>REST APIs</li>
                         <li>MongoDB</li>
-                        <li>SQL</li>
+                        <li>MySQL</li>
+                        <li>TypeORM</li>
+                        <li>Redis</li>
+                        <li>BullJS</li>
                     </ul>
                 </div>
                 <div class="skills-category">
-                    <h4>Game Dev & 3D</h4>
+                    <h4 data-i18n="skills.categories.devops.title">DevOps & Tools</h4>
+                    <ul>
+                        <li>Docker</li>
+                        <li>Jenkins</li>
+                        <li>CI/CD</li>
+                        <li>Grafana</li>
+                        <li>Loki</li>
+                        <li>Git</li>
+                        <li>OAuth2</li>
+                        <li>JWT</li>
+                    </ul>
+                </div>
+                <div class="skills-category">
+                    <h4 data-i18n="skills.categories.gamedev.title">Game Dev & 3D</h4>
                     <ul>
                         <li>Unity</li>
                         <li>Unreal Engine</li>
-                        <li>Blender</li>
-                        <li>3D Graphics</li>
+                        <li>C#</li>
+                        <li>C++</li>
+                        <li>Blender API</li>
+                        <li>WebGL</li>
                     </ul>
                 </div>
                 <div class="skills-category">
-                    <h4>DevOps & Tools</h4>
+                    <h4 data-i18n="skills.categories.architecture.title">Architecture</h4>
                     <ul>
-                        <li>CI/CD</li>
-                        <li>Jenkins</li>
-                        <li>Android Development</li>
-                        <li>RPA/Automation</li>
+                        <li>Hexagonal/DDD</li>
+                        <li>Microservices</li>
+                        <li>Event-Driven</li>
+                        <li>TDD</li>
+                        <li>SOLID</li>
+                        <li>Design Patterns</li>
                     </ul>
                 </div>
                 <div class="skills-category">
-                    <h4>Blockchain</h4>
+                    <h4 data-i18n="skills.categories.mobile.title">Mobile & Other</h4>
                     <ul>
-                        <li>Solidity</li>
-                        <li>Smart Contracts</li>
-                        <li>Web3</li>
+                        <li>Android</li>
+                        <li>Ionic</li>
+                        <li>RPA</li>
+                        <li>Automation</li>
+                        <li>Selenium</li>
                     </ul>
                 </div>
             </div>
         </section>
 
         <section id="projects" class="section">
-            <h2>Featured Projects</h2>
+            <h2 data-i18n="projects.title">Featured Projects</h2>
             <div class="projects-grid">
                 <div class="project-card">
                     <div class="project-image">
@@ -254,12 +291,30 @@
                     </div>
                     <div class="project-content">
                         <h3>VIPE Platform</h3>
-                        <p>3D Avatar Marketplace with blockchain integration</p>
+                        <p>3D Avatar Marketplace with blockchain integration and real-time rendering. Complete ecosystem with web3 wallet, NFT minting, and cross-platform SDK support.</p>
                         <div class="project-technologies">
                             <span>Angular</span>
                             <span>Three.js</span>
                             <span>NestJS</span>
+                            <span>MongoDB</span>
                             <span>Solidity</span>
+                            <span>Web3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*gPw8V-XQYQF-qJcONLKR7A.png" alt="Avatar Webcam">
+                    </div>
+                    <div class="project-content">
+                        <h3>Avatar Webcam</h3>
+                        <p>Real-time virtual camera application that transforms your webcam into a 3D avatar. Face tracking, expression mapping, and seamless integration with video conferencing apps.</p>
+                        <div class="project-technologies">
+                            <span>Unity</span>
+                            <span>C#</span>
+                            <span>Computer Vision</span>
+                            <span>WebRTC</span>
                         </div>
                     </div>
                 </div>
@@ -270,11 +325,11 @@
                     </div>
                     <div class="project-content">
                         <h3>Intruders: Hide and Seek</h3>
-                        <p>First-person stealth game for PS VR</p>
+                        <p>First-person stealth game for PS VR. Winner of "Best Game for Press" at PlayStation Talents 2016. Advanced AI, immersive VR mechanics.</p>
                         <div class="project-technologies">
                             <span>Unreal Engine</span>
                             <span>C++</span>
-                            <span>VR</span>
+                            <span>PlayStation VR</span>
                         </div>
                     </div>
                 </div>
@@ -285,11 +340,12 @@
                     </div>
                     <div class="project-content">
                         <h3>YetiRush</h3>
-                        <p>Multiplayer racing game for mobile</p>
+                        <p>Multiplayer racing game for mobile platforms. Real-time synchronization, custom physics engine, and competitive matchmaking system.</p>
                         <div class="project-technologies">
                             <span>Unity</span>
                             <span>Photon</span>
                             <span>C#</span>
+                            <span>Mobile</span>
                         </div>
                     </div>
                 </div>
@@ -300,7 +356,7 @@
                     </div>
                     <div class="project-content">
                         <h3>Zizeron AI</h3>
-                        <p>Platform for visualizing and analyzing image by artificial intelligence that detects and alarms about different situations. Real-time monitoring system with anomaly detection and automatic alerts.</p>
+                        <p>Platform for analyzing images with artificial intelligence that detects and alerts about different situations. Real-time monitoring system with anomaly detection and automatic alerts.</p>
                         <div class="project-technologies">
                             <span>Python</span>
                             <span>TensorFlow</span>
@@ -314,11 +370,13 @@
         </section>
 
         <section id="contact" class="section">
-            <h2>Contact</h2>
+            <h2 data-i18n="contact.title">Get in Touch</h2>
             <div class="contact-content">
+                <p data-i18n="contact.description">Open to projects where I can contribute in frontend architecture, optimization and system design.</p>
                 <div class="contact-info">
-                    <a href="https://www.linkedin.com/in/luis-maría-gonzález-pradas-88b946122" target="_blank">LinkedIn</a>
-                    <a href="mailto:your.email@example.com">Email</a>
+                    <a href="https://www.linkedin.com/in/luis-maría-gonzález-pradas-88b946122" target="_blank" rel="noopener" data-i18n="contact.linkedin">LinkedIn</a>
+                    <a href="mailto:luisma.pradas@gmail.com" data-i18n="contact.email">Email</a>
+                    <a href="https://github.com/luisma13" target="_blank" rel="noopener" data-i18n="contact.github">GitHub</a>
                 </div>
             </div>
         </section>
@@ -332,6 +390,6 @@
     <script src="js/orbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
     <script src="js/three-scene.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html> 

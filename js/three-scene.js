@@ -130,13 +130,18 @@ class ThreeScene {
         this.scene.add(this.planet);
 
         // Create panels
-        const panelGeometry = new THREE.PlaneGeometry(5, 3); // Paneles más grandes para evitar recortes
+        this.panelDisplayWidth = 5;
+        this.panelDisplayHeight = 3;
+        const panelGeometry = new THREE.PlaneGeometry(
+            this.panelDisplayWidth,
+            this.panelDisplayHeight
+        );
 
         // Create panels for each section
         this.panels = {};
         this.panelHitMeshes = [];
         Object.entries(this.targets).forEach(([section, position]) => {
-            const texture = this.createTextTexture(section.toUpperCase());
+            const { texture, hitSize } = this.createTextTexture(section.toUpperCase());
             
             const panel = new THREE.Mesh(
                 panelGeometry,
@@ -160,13 +165,7 @@ class ThreeScene {
             panel.rotateY(Math.PI);
             panel.raycast = () => {};
 
-            // Zona de clic más pequeña (solo el texto, no el margen inferior transparente)
-            const hitMesh = new THREE.Mesh(
-                new THREE.PlaneGeometry(3.6, 1.3),
-                new THREE.MeshBasicMaterial({ visible: false })
-            );
-            hitMesh.userData.section = section;
-            hitMesh.userData.parentPanel = panel;
+            const hitMesh = this.createPanelHitMesh(section, panel, hitSize);
             panel.add(hitMesh);
             this.panelHitMeshes.push(hitMesh);
             
@@ -734,6 +733,31 @@ class ThreeScene {
         this.handleResize();
     }
 
+    createPanelHitMesh(section, panel, hitSize) {
+        const hitMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(
+                hitSize.width * this.panelDisplayWidth,
+                hitSize.height * this.panelDisplayHeight
+            ),
+            new THREE.MeshBasicMaterial({ visible: false })
+        );
+        hitMesh.userData.section = section;
+        hitMesh.userData.parentPanel = panel;
+        panel.userData.hitMesh = hitMesh;
+        return hitMesh;
+    }
+
+    updatePanelHitMesh(panel, hitSize) {
+        const hitMesh = panel.userData.hitMesh;
+        if (!hitMesh) return;
+
+        hitMesh.geometry.dispose();
+        hitMesh.geometry = new THREE.PlaneGeometry(
+            hitSize.width * this.panelDisplayWidth,
+            hitSize.height * this.panelDisplayHeight
+        );
+    }
+
     createTextTexture(text) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -741,29 +765,41 @@ class ThreeScene {
         canvas.width = Math.round(1240 * scale);
         canvas.height = Math.round(512 * scale);
 
-        // Fondo completamente transparente
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Calcular el tamaño de fuente adecuado basado en la longitud del texto
+        const upperText = text.toUpperCase();
         const baseSize = Math.round(180 * scale);
-        const fontSize = Math.min(baseSize, baseSize * (10 / Math.max(text.length, 5)));
-        
-        ctx.fillStyle = '#ffffff';
+        const fontSize = Math.min(baseSize, baseSize * (10 / Math.max(upperText.length, 5)));
+        const shadowBlur = Math.round(15 * scale);
+
         ctx.font = `bold ${fontSize}px Arial`;
+        const metrics = ctx.measureText(upperText);
+        const textWidth = metrics.width;
+        const textHeight =
+            (metrics.actualBoundingBoxAscent || fontSize * 0.82)
+            + (metrics.actualBoundingBoxDescent || fontSize * 0.18);
+
+        const padX = Math.round(12 * scale);
+        const padY = Math.round(shadowBlur * 0.75);
+
+        ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        
-        const textX = canvas.width / 2;
-        const textY = canvas.height / 2;
-        
         ctx.shadowColor = '#00f7ff';
-        ctx.shadowBlur = Math.round(15 * scale);
-        ctx.fillText(text.toUpperCase(), textX, textY);
+        ctx.shadowBlur = shadowBlur;
+        ctx.fillText(upperText, canvas.width / 2, canvas.height / 2);
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.minFilter = THREE.LinearFilter;
         texture.generateMipmaps = false;
-        return texture;
+
+        return {
+            texture,
+            hitSize: {
+                width: Math.min(1, (textWidth + padX * 2) / canvas.width),
+                height: Math.min(1, (textHeight + padY * 2) / canvas.height)
+            }
+        };
     }
 
     updatePanelLabels(labels) {
@@ -771,12 +807,15 @@ class ThreeScene {
             const panel = this.panels[section];
             if (!panel?.material) return;
 
+            const { texture, hitSize } = this.createTextTexture(label);
+
             if (panel.material.map) {
                 panel.material.map.dispose();
             }
 
-            panel.material.map = this.createTextTexture(label);
+            panel.material.map = texture;
             panel.material.needsUpdate = true;
+            this.updatePanelHitMesh(panel, hitSize);
         });
     }
 

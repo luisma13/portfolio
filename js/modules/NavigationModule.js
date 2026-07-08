@@ -26,7 +26,6 @@ class NavigationModule {
         this._setupLogoClick();
         this._setupSmoothScroll();
         this._setupDiscoverButton();
-        this._setupStateListeners();
 
         this.isInitialized = true;
     }
@@ -101,63 +100,6 @@ class NavigationModule {
                 smoothScrollTo(aboutSection, Config.ui.scrollOffset);
             }
         });
-    }
-
-    /**
-     * Configurar listeners de estado
-     * @private
-     */
-    _setupStateListeners() {
-        // Escuchar cuando cambia el modo 3D
-        StateManager.subscribe('is3DMode', ({ newValue }) => {
-            // Aquí puedes actualizar la UI si es necesario
-            if (newValue) {
-                // Estamos en modo 3D
-                console.log('Navigation: Entered 3D mode');
-            } else {
-                // Salimos de modo 3D
-                console.log('Navigation: Exited 3D mode');
-            }
-        });
-    }
-
-    /**
-     * Navegar a una sección específica
-     * @param {string} sectionId - ID de la sección
-     * @param {boolean} [smooth=true] - Usar smooth scroll
-     */
-    navigateTo(sectionId, smooth = true) {
-        const section = document.getElementById(sectionId);
-        if (!section) {
-            console.warn(`Section not found: ${sectionId}`);
-            return;
-        }
-
-        if (smooth) {
-            smoothScrollTo(section, Config.ui.scrollOffset);
-        } else {
-            section.scrollIntoView({ block: 'start' });
-        }
-    }
-
-    /**
-     * Obtener sección activa actual
-     * @returns {string|null}
-     */
-    getCurrentSection() {
-        const sections = document.querySelectorAll('.section');
-        const scrollPosition = window.pageYOffset + Config.ui.scrollOffset + 100;
-
-        for (const section of sections) {
-            const sectionTop = section.offsetTop;
-            const sectionBottom = sectionTop + section.offsetHeight;
-
-            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-                return section.id;
-            }
-        }
-
-        return null;
     }
 
     /**

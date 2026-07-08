@@ -36,15 +36,18 @@ class ThreeScene {
             zoomOut: 800
         };
 
+        this.quality = this._resolveQuality();
+        this.lastRenderTime = 0;
+
         this.renderer = new THREE.WebGLRenderer({ 
-            antialias: true, 
+            antialias: this.quality.antialias, 
             alpha: true,
-            powerPreference: "high-performance"
+            powerPreference: 'high-performance'
         });
         
         // Set renderer size to match container
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.quality.maxPixelRatio));
         this.container.appendChild(this.renderer.domElement);
 
         // Implementar un debounce para el evento de redimensionamiento
@@ -70,6 +73,34 @@ class ThreeScene {
         this.setupResizeObserver();
     }
 
+    _resolveQuality() {
+        const defaults = {
+            starCount: 2000,
+            planetSegments: 32,
+            moonDetail: 2,
+            maxPixelRatio: 2,
+            antialias: true,
+            textureScale: 1,
+            previewFrameMs: 33,
+            activeFrameMs: 0
+        };
+        const qualityConfig = window.PortfolioConfig?.three?.quality || {};
+        const isMobile = window.matchMedia('(max-width: 768px)').matches
+            || navigator.maxTouchPoints > 0;
+        const profile = isMobile
+            ? { ...defaults, ...qualityConfig.mobile }
+            : { ...defaults, ...qualityConfig.desktop };
+
+        return { ...profile, isMobile };
+    }
+
+    _getFrameInterval() {
+        if (document.hidden) return Infinity;
+
+        const is3DActive = document.body.classList.contains('mode-3d-active');
+        return is3DActive ? this.quality.activeFrameMs : this.quality.previewFrameMs;
+    }
+
     init() {
         // Planet configuration
         const planetConfig = window.PortfolioConfig?.three?.planet || {
@@ -77,12 +108,13 @@ class ThreeScene {
             wireframeColor: 0x00f7ff,
             segments: 32
         };
+        const planetSegments = this.quality.planetSegments ?? planetConfig.segments;
 
         // Create planet
         const planetGeometry = new THREE.SphereGeometry(
             planetConfig.radius,
-            planetConfig.segments,
-            planetConfig.segments
+            planetSegments,
+            planetSegments
         );
         
         // Create wireframe material
@@ -102,8 +134,9 @@ class ThreeScene {
 
         // Create panels for each section
         this.panels = {};
+        this.panelHitMeshes = [];
         Object.entries(this.targets).forEach(([section, position]) => {
-            const texture = this.createTextTexture(section);
+            const texture = this.createTextTexture(section.toUpperCase());
             
             const panel = new THREE.Mesh(
                 panelGeometry,
@@ -111,7 +144,7 @@ class ThreeScene {
                     map: texture,
                     transparent: true,
                     opacity: 1.0,
-                    side: THREE.DoubleSide,
+                    side: THREE.FrontSide,
                     depthWrite: false,
                     alphaTest: 0.1
                 })
@@ -125,6 +158,17 @@ class ThreeScene {
             // Make panel look outward
             panel.lookAt(0, 0, 0);
             panel.rotateY(Math.PI);
+            panel.raycast = () => {};
+
+            // Zona de clic más pequeña (solo el texto, no el margen inferior transparente)
+            const hitMesh = new THREE.Mesh(
+                new THREE.PlaneGeometry(3.6, 1.3),
+                new THREE.MeshBasicMaterial({ visible: false })
+            );
+            hitMesh.userData.section = section;
+            hitMesh.userData.parentPanel = panel;
+            panel.add(hitMesh);
+            this.panelHitMeshes.push(hitMesh);
             
             this.planet.add(panel);
             this.panels[section] = panel;
@@ -136,11 +180,12 @@ class ThreeScene {
             minRadius: 20,
             maxRadius: 50
         };
+        const starCount = this.quality.starCount ?? starfieldConfig.count;
 
         const starGeometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(starfieldConfig.count * 3);
+        const positions = new Float32Array(starCount * 3);
         
-        for (let i = 0; i < starfieldConfig.count * 3; i += 3) {
+        for (let i = 0; i < starCount * 3; i += 3) {
             const radius = starfieldConfig.minRadius + 
                 Math.random() * (starfieldConfig.maxRadius - starfieldConfig.minRadius);
             const theta = Math.random() * Math.PI * 2;
@@ -155,7 +200,7 @@ class ThreeScene {
         
         const starMaterial = new THREE.PointsMaterial({
             color: 0xffffff,
-            size: 0.1,
+            size: this.quality.isMobile ? 0.14 : 0.1,
             sizeAttenuation: true
         });
         
@@ -176,6 +221,7 @@ class ThreeScene {
         // Initialize camera target
         this.currentTarget = null;
         this.isMovingToTarget = false;
+        this.cameraAnimationGeneration = 0;
 
         // Create moon
         const moonConfig = window.PortfolioConfig?.three?.moon || {
@@ -185,7 +231,10 @@ class ThreeScene {
             orbitSpeed: 0.0005
         };
 
-        const moonGeometry = new THREE.IcosahedronGeometry(moonConfig.size, 2);
+        const moonGeometry = new THREE.IcosahedronGeometry(
+            moonConfig.size,
+            this.quality.moonDetail ?? 2
+        );
         const moonMaterial = new THREE.MeshBasicMaterial({
             color: '#00f7ff',
             wireframe: true,
@@ -195,19 +244,201 @@ class ThreeScene {
         this.moon = new THREE.Mesh(moonGeometry, moonMaterial);
         this.moonConfig = moonConfig;
         this.scene.add(this.moon);
+
+        this.setupInteractions();
+    }
+
+    setupInteractions() {
+        this.raycaster = new THREE.Raycaster();
+        this.pointer = new THREE.Vector2();
+        this.interactionsEnabled = false;
+        this.isPointerDown = false;
+        this.didDrag = false;
+        this.hoveredPanel = null;
+        this.dragSensitivity = 0.006;
+        this.dragThreshold = 4;
+
+        Object.entries(this.panels).forEach(([section, panel]) => {
+            panel.userData.section = section;
+            panel.userData.baseOpacity = panel.material.opacity;
+        });
+
+        const canvas = this.renderer.domElement;
+        canvas.style.touchAction = 'none';
+
+        this._onPointerDown = (e) => this.onPointerDown(e);
+        this._onPointerMove = (e) => this.onPointerMove(e);
+        this._onPointerUp = (e) => this.onPointerUp(e);
+
+        canvas.addEventListener('pointerdown', this._onPointerDown);
+        canvas.addEventListener('pointermove', this._onPointerMove);
+        canvas.addEventListener('pointerup', this._onPointerUp);
+        canvas.addEventListener('pointerleave', this._onPointerUp);
+        canvas.addEventListener('pointercancel', this._onPointerUp);
+    }
+
+    setInteractionsEnabled(enabled) {
+        this.interactionsEnabled = enabled;
+
+        if (!enabled) {
+            this.resetPointerState();
+        }
+    }
+
+    resetPointerState() {
+        this.isPointerDown = false;
+        this.didDrag = false;
+        this.setHoveredPanel(null);
+        this.renderer.domElement.style.cursor = '';
+        this.container.classList.remove('is-dragging');
+    }
+
+    updatePointer(event) {
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    getPointerDx(event) {
+        return event.clientX - this.pointerDownPos.x;
+    }
+
+    getPanelHit() {
+        this.raycaster.setFromCamera(this.pointer, this.camera);
+        const hits = this.raycaster.intersectObjects(this.panelHitMeshes, false);
+        return hits.length > 0 ? hits[0].object.userData.parentPanel : null;
+    }
+
+    beginCameraAnimation() {
+        this.cameraAnimationGeneration += 1;
+        this.isMovingToTarget = true;
+        return this.cameraAnimationGeneration;
+    }
+
+    startCameraTransition() {
+        this.cameraAnimationGeneration += 1;
+        return this.cameraAnimationGeneration;
+    }
+
+    cancelCameraAnimation() {
+        this.cameraAnimationGeneration += 1;
+        this.isMovingToTarget = false;
+    }
+
+    canDrag() {
+        return this.interactionsEnabled
+            && !this.container.classList.contains('has-active-section');
+    }
+
+    setHoveredPanel(panel) {
+        if (this.isPointerDown || this.hoveredPanel === panel) return;
+
+        if (this.hoveredPanel) {
+            this.hoveredPanel.material.opacity = this.hoveredPanel.userData.baseOpacity;
+        }
+
+        this.hoveredPanel = panel;
+
+        if (panel) {
+            panel.material.opacity = 1;
+        }
+    }
+
+    onPointerDown(event) {
+        if (!this.canDrag() || event.button !== 0) return;
+
+        if (this.isMovingToTarget) {
+            this.cancelCameraAnimation();
+            this.currentTarget = null;
+        }
+
+        this.isPointerDown = true;
+        this.didDrag = false;
+        this.pointerDownPos = { x: event.clientX, y: event.clientY };
+        this.dragPlanetStartY = this.planet.rotation.y;
+
+        this.renderer.domElement.setPointerCapture(event.pointerId);
+        event.preventDefault();
+    }
+
+    onPointerMove(event) {
+        if (!this.interactionsEnabled) return;
+
+        this.updatePointer(event);
+
+        if (this.isPointerDown && this.canDrag()) {
+            const dx = this.getPointerDx(event);
+
+            if (Math.abs(dx) > this.dragThreshold) {
+                this.didDrag = true;
+                this.container.classList.add('is-dragging');
+            }
+
+            this.planet.rotation.y = this.dragPlanetStartY + dx * this.dragSensitivity;
+            this.renderer.domElement.style.cursor = 'grabbing';
+            this.setHoveredPanel(null);
+            return;
+        }
+
+        if (!this.canDrag()) {
+            this.renderer.domElement.style.cursor = '';
+            this.setHoveredPanel(null);
+            return;
+        }
+
+        const panel = this.getPanelHit();
+        this.setHoveredPanel(panel);
+        this.renderer.domElement.style.cursor = panel ? 'pointer' : 'grab';
+    }
+
+    onPointerUp(event) {
+        if (!this.isPointerDown) return;
+
+        try {
+            this.renderer.domElement.releasePointerCapture(event.pointerId);
+        } catch (_) {
+            // Pointer may already be released
+        }
+
+        const dx = this.getPointerDx(event);
+
+        if (this.canDrag() && Math.abs(dx) <= this.dragThreshold) {
+            this.updatePointer(event);
+            const panel = this.getPanelHit();
+            if (panel) {
+                this.moveToTarget(panel.userData.section);
+            }
+        }
+
+        this.resetPointerState();
+
+        if (this.canDrag()) {
+            this.updatePointer(event);
+            const panel = this.getPanelHit();
+            this.setHoveredPanel(panel);
+            this.renderer.domElement.style.cursor = panel ? 'pointer' : 'grab';
+        }
     }
 
     animate() {
         requestAnimationFrame(() => this.animate());
 
-        // Rotate the planet solo si no estamos en transición
-        if (!this.isMovingToTarget) {
+        const now = performance.now();
+        const frameInterval = this._getFrameInterval();
+        if (frameInterval > 0 && now - this.lastRenderTime < frameInterval) {
+            return;
+        }
+        this.lastRenderTime = now;
+
+        // Rotate the planet solo si no estamos en transición, arrastrando o sobre un cartel
+        if (!this.isMovingToTarget && !this.isPointerDown && !this.hoveredPanel) {
             this.planet.rotation.y += 0.002;
         }
 
-        // Rotate the starfield slowly
-        this.starfield.rotation.x += 0.0002;
-        this.starfield.rotation.y += 0.0002;
+        // Rotación del starfield (más lenta en móvil)
+        const starfieldSpeed = this.quality.isMobile ? 0.00008 : 0.0002;
+        this.starfield.rotation.x += starfieldSpeed;
+        this.starfield.rotation.y += starfieldSpeed;
 
         // Rotate moon around planet
         if (this.moon && this.moonConfig) {
@@ -271,7 +502,7 @@ class ThreeScene {
             }
         }
 
-        this.isMovingToTarget = true;
+        const animationGeneration = this.beginCameraAnimation();
         this.currentTarget = section;
         
         // Obtener la posición actual de la cámara y su distancia al centro
@@ -306,6 +537,8 @@ class ThreeScene {
         
         // Función de animación principal
         const animate = () => {
+            if (animationGeneration !== this.cameraAnimationGeneration) return;
+
             const currentTime = Date.now();
             const elapsedTime = currentTime - startTime;
             
@@ -399,7 +632,7 @@ class ThreeScene {
 
         // Actualizar el tamaño del renderer y la relación de píxeles
         this.renderer.setSize(width, height, false); // false para evitar establecer el estilo
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.quality.maxPixelRatio));
         
         // Forzar un renderizado para actualizar la vista inmediatamente
         this.renderer.render(this.scene, this.camera);
@@ -411,7 +644,11 @@ class ThreeScene {
             duration = this.animationDurations.cameraTransition || 1000;
         }
 
-        const targetZ = mode === 'fullscreen' 
+        const isFullscreen = mode === 'fullscreen';
+        this.container.classList.toggle('fullscreen', isFullscreen);
+        this.setInteractionsEnabled(isFullscreen);
+
+        const targetZ = isFullscreen
             ? this.cameraPositions.fullscreen.z 
             : this.cameraPositions.normal.z;
         
@@ -419,6 +656,7 @@ class ThreeScene {
         if (mode === 'normal') {
             this.camera.position.set(0, 0, this.camera.position.z);
             this.camera.lookAt(0, 0, 0);
+            this.setHoveredPanel(null);
         }
         
         this.animateCamera(targetZ, duration);
@@ -461,29 +699,25 @@ class ThreeScene {
         if (this.planet) {
             this.planet.rotation.y = 0;
         }
+
+        this.resetPointerState();
+
+        Object.values(this.panels).forEach(panel => {
+            panel.scale.set(1, 1, 1);
+            if (panel.material && panel.userData.baseOpacity !== undefined) {
+                panel.material.opacity = panel.userData.baseOpacity;
+            }
+        });
         
         // Resetear los targets y estado de movimiento
         this.currentTarget = null;
         this.isMovingToTarget = false;
         
-        // Cerrar todas las secciones y asegurar que el contenido esté en su lugar original
+        // Cerrar overlays (el contenido es un clon; el original sigue en <main>)
         const sections = ['about', 'skills', 'experience', 'projects', 'contact'];
         sections.forEach(sectionId => {
-            const section = document.getElementById(sectionId);
             const overlay = document.getElementById(`${sectionId}-3d-overlay`);
-            
-            if (section && overlay) {
-                // Si hay contenido en el overlay, moverlo de vuelta a la sección original
-                const content = overlay.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
-                if (content) {
-                    section.appendChild(content);
-                }
-                
-                // Limpiar y ocultar el overlay
-                overlay.innerHTML = '';
-                overlay.style.display = 'none';
-                overlay.classList.remove('active');
-            }
+            this.clearSectionOverlay(overlay);
         });
         
         // Quitar la marca del contenedor 3D
@@ -503,33 +737,47 @@ class ThreeScene {
     createTextTexture(text) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 1240; // Canvas más ancho
-        canvas.height = 512; // Canvas más alto
+        const scale = this.quality.textureScale || 1;
+        canvas.width = Math.round(1240 * scale);
+        canvas.height = Math.round(512 * scale);
 
         // Fondo completamente transparente
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Calcular el tamaño de fuente adecuado basado en la longitud del texto
-        const baseSize = 180;
+        const baseSize = Math.round(180 * scale);
         const fontSize = Math.min(baseSize, baseSize * (10 / Math.max(text.length, 5)));
         
-        // Texto con color rosa
-        ctx.fillStyle = '#ffffff'; // Color rosa
+        ctx.fillStyle = '#ffffff';
         ctx.font = `bold ${fontSize}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        // Añadir padding para evitar recortes
-        const padding = 40;
         const textX = canvas.width / 2;
         const textY = canvas.height / 2;
         
-        // Dibujar el texto con brillo
         ctx.shadowColor = '#00f7ff';
-        ctx.shadowBlur = 15;
+        ctx.shadowBlur = Math.round(15 * scale);
         ctx.fillText(text.toUpperCase(), textX, textY);
 
-        return new THREE.CanvasTexture(canvas);
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+        texture.generateMipmaps = false;
+        return texture;
+    }
+
+    updatePanelLabels(labels) {
+        Object.entries(labels).forEach(([section, label]) => {
+            const panel = this.panels[section];
+            if (!panel?.material) return;
+
+            if (panel.material.map) {
+                panel.material.map.dispose();
+            }
+
+            panel.material.map = this.createTextTexture(label);
+            panel.material.needsUpdate = true;
+        });
     }
 
     // Añadir esta función después de resetScene
@@ -549,8 +797,12 @@ class ThreeScene {
         }
     }
 
-    easeInOut(t) {
-        return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    clearSectionOverlay(overlay) {
+        if (!overlay) return;
+
+        overlay.classList.remove('active');
+        overlay.style.display = 'none';
+        overlay.innerHTML = '';
     }
 
     // Método para mostrar la sección correspondiente
@@ -563,18 +815,22 @@ class ThreeScene {
         // Limpiar el overlay
         overlay.innerHTML = '';
         
-        // Añadir el botón de cierre
+        // Añadir el botón de cierre (fijo al overlay, fuera del scroll)
         const closeButton = document.createElement('button');
         closeButton.className = 'close-overlay';
         closeButton.innerHTML = '×';
         closeButton.onclick = () => this.hideSectionOverlay(section);
         overlay.appendChild(closeButton);
+
+        const scrollWrapper = document.createElement('div');
+        scrollWrapper.className = 'overlay-scroll';
+        overlay.appendChild(scrollWrapper);
         
-        // Clonar el contenido principal de la sección al overlay
+        // Clonar el contenido principal de la sección al área scrollable
         const content = originalSection.querySelector('.about-content, .skills, .timeline, .projects-grid, .contact-content');
         if (content) {
             const clonedContent = content.cloneNode(true);
-            overlay.appendChild(clonedContent);
+            scrollWrapper.appendChild(clonedContent);
         }
         
         // Marcar el contenedor 3D
@@ -582,68 +838,55 @@ class ThreeScene {
         
         // Mostrar el overlay
         overlay.classList.add('active');
-        overlay.style.display = 'block';
+        overlay.style.display = 'flex';
     }
     
-    // Method to zoom out from a panel
-    zoomOutFromPanel(duration) {
-        // Use config duration if not provided
+    // Method to zoom out from a panel (no bloquea el arrastre)
+    zoomOutFromPanel(duration, sectionOverride) {
         if (!duration) {
             duration = this.animationDurations.zoomOut || 800;
         }
 
-        if (!this.currentTarget || this.isMovingToTarget) return;
+        const targetSection = sectionOverride || this.currentTarget;
+        if (!targetSection) return;
         
-        const panel = this.panels[this.currentTarget];
+        const panel = this.panels[targetSection];
         if (!panel) return;
 
-        this.isMovingToTarget = true;
+        this.currentTarget = null;
+        const animationGeneration = this.startCameraTransition();
         
-        // Obtener la posición actual de la cámara
         const startDirection = this.camera.position.clone().normalize();
         const startDistance = this.camera.position.length();
-        const normalDistance = 20; // Distancia normal para orbitar
-        
+        const normalDistance = 20;
         const startTime = Date.now();
-        
-        // Función de ease para suavizar la animación
         const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
         
         const animate = () => {
-            const currentTime = Date.now();
-            const elapsedTime = currentTime - startTime;
+            if (animationGeneration !== this.cameraAnimationGeneration) return;
+
+            const elapsedTime = Date.now() - startTime;
             
             if (elapsedTime >= duration) {
-                // Finalizar la animación
                 this.camera.position.copy(startDirection.multiplyScalar(normalDistance));
                 this.camera.lookAt(0, 0, 0);
-                this.isMovingToTarget = false;
-                this.currentTarget = null;
                 return;
             }
             
-            // Calcular el progreso con easing
             const progress = easeOutCubic(Math.min(elapsedTime / duration, 1));
-            
-            // Interpolar la distancia
             const currentDistance = startDistance + (normalDistance - startDistance) * progress;
             
-            // Actualizar la posición de la cámara
             this.camera.position.copy(startDirection.clone().multiplyScalar(currentDistance));
             
-            // Interpolar la mirada desde el panel hacia el centro
             const panelWorldPos = new THREE.Vector3();
             panel.getWorldPosition(panelWorldPos);
-            const centerPos = new THREE.Vector3(0, 0, 0);
             const lookAtPos = new THREE.Vector3();
-            lookAtPos.lerpVectors(panelWorldPos, centerPos, progress);
+            lookAtPos.lerpVectors(panelWorldPos, new THREE.Vector3(0, 0, 0), progress);
             this.camera.lookAt(lookAtPos);
             
-            // Continuar la animación
             requestAnimationFrame(animate);
         };
         
-        // Iniciar la animación
         animate();
     }
     
@@ -652,15 +895,14 @@ class ThreeScene {
         const overlay = document.getElementById(`${section}-3d-overlay`);
         if (!overlay) return;
         
-        // Ocultar el overlay
-        overlay.classList.remove('active');
-        overlay.style.display = 'none';
+        this.clearSectionOverlay(overlay);
         
         // Quitar la marca del contenedor 3D
         this.container.classList.remove('has-active-section');
+        this.resetPointerState();
         
         // Hacer zoom out para volver a la vista orbital
-        this.zoomOutFromPanel();
+        this.zoomOutFromPanel(undefined, section);
     }
 
     // Método para ocultar todas las secciones
@@ -671,11 +913,9 @@ class ThreeScene {
         overlays.forEach(overlay => {
             if (overlay.classList.contains('active')) {
                 wasAnyActive = true;
-                
-                // Ocultar el overlay
-                overlay.classList.remove('active');
-                overlay.style.display = 'none';
             }
+
+            this.clearSectionOverlay(overlay);
         });
         
         // Quitar la marca del contenedor 3D
@@ -698,10 +938,4 @@ class ThreeScene {
 }
 
 // Exponer la clase globalmente para que app.js pueda usarla
-window.ThreeScene = ThreeScene;
-
-// Initialize the scene when the page loads
-// Note: Los event listeners ahora son manejados por ThreeModule y NavigationModule
-window.addEventListener('load', () => {
-    console.log('✓ ThreeScene loaded and ready');
-}); 
+window.ThreeScene = ThreeScene; 

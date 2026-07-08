@@ -5,7 +5,7 @@ const Config = {
     // Configuración general
     app: {
         name: 'LMGP Portfolio',
-        version: '2.0.0',
+        version: '2.1.0',
         author: 'Luis María González Pradas'
     },
 
@@ -49,6 +49,28 @@ const Config = {
             'experience': { angle: (4 * Math.PI) / 5 },
             'projects': { angle: (6 * Math.PI) / 5 },
             'contact': { angle: (8 * Math.PI) / 5 }
+        },
+        quality: {
+            desktop: {
+                starCount: 2000,
+                planetSegments: 32,
+                moonDetail: 2,
+                maxPixelRatio: 2,
+                antialias: true,
+                textureScale: 1,
+                previewFrameMs: 33,
+                activeFrameMs: 0
+            },
+            mobile: {
+                starCount: 400,
+                planetSegments: 16,
+                moonDetail: 0,
+                maxPixelRatio: 1.25,
+                antialias: false,
+                textureScale: 0.5,
+                previewFrameMs: 80,
+                activeFrameMs: 33
+            }
         }
     },
 
@@ -71,7 +93,6 @@ const Config = {
     // Eventos personalizados
     events: {
         LANGUAGE_CHANGED: 'language:changed',
-        THEME_CHANGED: 'theme:changed',
         MODE_3D_TOGGLE: '3d:toggle',
         SECTION_NAVIGATE: 'section:navigate',
         LOADER_COMPLETE: 'loader:complete'

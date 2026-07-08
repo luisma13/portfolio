@@ -140,16 +140,7 @@ class UIModule {
             this.elements.languageToggle.addEventListener('click', () => {
                 const currentLang = StateManager.get('language');
                 const newLang = currentLang === 'en' ? 'es' : 'en';
-                
-                // Llamar directamente a I18nService para cambiar el idioma
                 I18nService.setLanguage(newLang);
-            });
-            
-            // Escuchar cambios de idioma para actualizar el botón
-            EventBus.on(Config.events.LANGUAGE_CHANGED, ({ language }) => {
-                if (this.elements.languageToggle) {
-                    this.elements.languageToggle.innerHTML = `<span class="lang-icon">${language.toUpperCase()}</span>`;
-                }
             });
         }
     }
@@ -203,29 +194,10 @@ class UIModule {
     }
 
     /**
-     * Mostrar/ocultar loader manualmente
-     * @param {boolean} show
-     */
-    toggleLoader(show) {
-        if (!this.elements.loader) return;
-
-        if (show) {
-            this.elements.loader.style.display = 'flex';
-            this.elements.loader.classList.remove('fade-out');
-        } else {
-            this.elements.loader.classList.add('fade-out');
-            setTimeout(() => {
-                this.elements.loader.style.display = 'none';
-            }, Config.ui.loaderFadeOut);
-        }
-    }
-
-    /**
      * Destruir módulo
      */
     destroy() {
         this.isInitialized = false;
-        // Aquí podrías limpiar event listeners si lo necesitas
     }
 }
 

@@ -26,25 +26,11 @@ class App {
     async initialize() {
         if (this.isInitialized) return;
 
-        console.log(`%c${Config.app.name} v${Config.app.version}`, 
-            'color: #00f7ff; font-size: 16px; font-weight: bold;');
-
         try {
-            // 1. Inicializar servicios core
             await this._initializeCore();
-
-            // 2. Inicializar módulos
             await this._initializeModules();
-
-            // 3. Configurar listeners globales
             this._setupGlobalListeners();
-
-            // 4. Marcar como inicializado
             this.isInitialized = true;
-
-            console.log('%cApplication initialized successfully ✓', 
-                'color: #00f7ff; font-weight: bold;');
-
         } catch (error) {
             console.error('Error initializing application:', error);
         }
@@ -55,10 +41,7 @@ class App {
      * @private
      */
     async _initializeCore() {
-        // Inicializar sistema de traducciones
         I18nService.initialize();
-
-        console.log('✓ Core services initialized');
     }
 
     /**
@@ -66,19 +49,11 @@ class App {
      * @private
      */
     async _initializeModules() {
-        // Inicializar UI Module
         await this.modules.ui.initialize();
-        console.log('✓ UI Module initialized');
-
-        // Inicializar Navigation Module
         this.modules.navigation.initialize();
-        console.log('✓ Navigation Module initialized');
 
-        // Inicializar Three Module (cargamos ThreeScene después)
-        // Esperamos a que el DOM esté completamente cargado
         if (window.ThreeScene) {
             await this.modules.three.initialize(window.ThreeScene);
-            console.log('✓ Three Module initialized');
         } else {
             console.warn('ThreeScene not found. 3D features will be disabled.');
         }
@@ -89,22 +64,10 @@ class App {
      * @private
      */
     _setupGlobalListeners() {
-        // Log de cambios de idioma (solo para información)
-        EventBus.on(Config.events.LANGUAGE_CHANGED, ({ language }) => {
-            console.log(`✓ Language changed to: ${language}`);
-        });
-
-        // Escuchar cuando el loader termina
-        EventBus.on(Config.events.LOADER_COMPLETE, () => {
-            console.log('Loader animation completed');
-        });
-
-        // Manejar errores globales
         window.addEventListener('error', (event) => {
             console.error('Global error:', event.error);
         });
 
-        // Manejar errores de promesas no capturados
         window.addEventListener('unhandledrejection', (event) => {
             console.error('Unhandled promise rejection:', event.reason);
         });
@@ -145,7 +108,6 @@ class App {
         StateManager.reset();
 
         this.isInitialized = false;
-        console.log('Application destroyed');
     }
 }
 

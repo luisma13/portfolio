@@ -127,7 +127,9 @@ class I18nService {
         
         // Actualizar secciones dinámicas
         this._updateExperience();
+        this._updateSkills();
         this._updateProjects();
+        this._update3DPanels();
 
         // Actualizar placeholders
         document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
@@ -154,6 +156,47 @@ class I18nService {
     }
 
     /**
+     * Renderizar cabecera de empresa en timeline
+     * @private
+     */
+    _renderJobHeader(job) {
+        if (job.logo) {
+            const alt = job.logoAlt || job.company;
+            return `
+                <div class="company-header">
+                    <img src="${job.logo}" alt="${alt}" class="company-logo">
+                    <h3>${job.role} - ${job.company}</h3>
+                </div>
+            `;
+        }
+
+        return `<h3>${job.role} - <strong>${job.company}</strong></h3>`;
+    }
+
+    /**
+     * Actualizar etiquetas de paneles 3D
+     */
+    refresh3DPanels() {
+        this._update3DPanels();
+    }
+
+    /**
+     * Actualizar etiquetas de paneles 3D
+     * @private
+     */
+    _update3DPanels() {
+        const scene = window.threeScene;
+        if (!scene?.updatePanelLabels) return;
+
+        const labels = {};
+        Object.keys(Config.three.targets).forEach(section => {
+            labels[section] = this.t(`nav.${section}`);
+        });
+
+        scene.updatePanelLabels(labels);
+    }
+
+    /**
      * Actualizar sección de experiencia
      * @private
      */
@@ -167,27 +210,7 @@ class I18nService {
         timeline.innerHTML = jobs.map(job => `
             <div class="timeline-item">
                 <div class="timeline-content">
-                    ${job.company === 'PolygonalMind' || job.company === 'Polygonal Mind' ? 
-                        `<div class="company-header">
-                            <img src="images/polygonal_mind_logo.jpg" alt="Polygonal Mind Logo" class="company-logo">
-                            <h3>${job.role} - ${job.company}</h3>
-                        </div>` :
-                    job.company === 'esPublico Tecnología' ? 
-                        `<div class="company-header">
-                            <img src="images/espublico_tech_logo.jpg" alt="esPublico Logo" class="company-logo">
-                            <h3>${job.role} - ${job.company}</h3>
-                        </div>` :
-                    job.company === 'MedUX' ? 
-                        `<div class="company-header">
-                            <img src="images/meduxjpg.jpg" alt="MedUX Logo" class="company-logo">
-                            <h3>${job.role} - ${job.company}</h3>
-                        </div>` :
-                    job.company === 'Tessera Studios' ? 
-                        `<div class="company-header">
-                            <img src="images/tesserajpg.jpg" alt="Tessera Studios Logo" class="company-logo">
-                            <h3>${job.role} - ${job.company}</h3>
-                        </div>` :
-                    `<h3>${job.role} - <strong>${job.company}</strong></h3>`}
+                    ${this._renderJobHeader(job)}
                     <span class="date">${job.period} | ${job.location}</span>
                     ${job.description ? `<p>${job.description}</p>` : ''}
                     ${job.highlights && job.highlights.length > 0 ? `
@@ -201,6 +224,59 @@ class I18nService {
     }
 
     /**
+     * Actualizar sección de skills
+     * @private
+     */
+    _updateSkills() {
+        const skillsContainer = document.querySelector('#skills .skills');
+        if (!skillsContainer) return;
+
+        const categories = this.t('skills.categories');
+        if (!categories || typeof categories !== 'object') return;
+
+        skillsContainer.innerHTML = Object.values(categories).map(category => `
+            <div class="skills-category">
+                <h4>${category.title}</h4>
+                <ul>
+                    ${category.items.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('');
+    }
+
+    /**
+     * Renderizar tarjeta de proyecto
+     * @private
+     */
+    _renderProjectCard(project) {
+        const imagePath = project.image || '';
+        const inner = `
+            ${imagePath ? `
+            <div class="project-image">
+                <img src="${imagePath}" alt="${project.title}" onerror="this.parentElement.style.display='none'">
+            </div>
+            ` : ''}
+            <div class="project-content">
+                <h3>${project.title}</h3>
+                <p>${project.description}</p>
+                <div class="project-technologies">
+                    ${project.technologies.map(tech => `<span>${tech}</span>`).join('')}
+                </div>
+            </div>
+        `;
+
+        if (project.url) {
+            return `
+                <a class="project-card" href="${project.url}" target="_blank" rel="noopener noreferrer" aria-label="${project.title}">
+                    ${inner}
+                </a>
+            `;
+        }
+
+        return `<div class="project-card">${inner}</div>`;
+    }
+
+    /**
      * Actualizar sección de proyectos
      * @private
      */
@@ -211,38 +287,7 @@ class I18nService {
         const projects = this.t('projects.items');
         if (!Array.isArray(projects)) return;
         
-        projectsGrid.innerHTML = projects.map(project => {
-            // Determinar la imagen del proyecto desde URLs externas
-            let imagePath = '';
-            if (project.title === 'VIPE Platform') {
-                imagePath = 'https://miro.medium.com/v2/resize:fit:720/format:webp/1*DTn5k1-XaBaiO0y3ZJSRyQ.jpeg';
-            } else if (project.title === 'Avatar Webcam') {
-                imagePath = 'images/avatar_webcam.jpg';
-            } else if (project.title === 'Intruders: Hide and Seek') {
-                imagePath = 'https://i.ytimg.com/vi/UjBUxNE7N4w/maxresdefault.jpg';
-            } else if (project.title === 'YetiRush') {
-                imagePath = 'https://pbs.twimg.com/profile_banners/1189135826980167681/1695047200/600x200';
-            } else if (project.title === 'Zizeron AI') {
-                imagePath = 'images/zizeron.png';
-            }
-            
-            return `
-                <div class="project-card">
-                    ${imagePath ? `
-                    <div class="project-image">
-                        <img src="${imagePath}" alt="${project.title}" onerror="this.parentElement.style.display='none'">
-                    </div>
-                    ` : ''}
-                    <div class="project-content">
-                        <h3>${project.title}</h3>
-                        <p>${project.description}</p>
-                        <div class="project-technologies">
-                            ${project.technologies.map(tech => `<span>${tech}</span>`).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+        projectsGrid.innerHTML = projects.map(project => this._renderProjectCard(project)).join('');
     }
 
     /**

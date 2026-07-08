@@ -5,6 +5,7 @@
 import Config from '../core/Config.js';
 import EventBus from '../core/EventBus.js';
 import StateManager from '../core/StateManager.js';
+import I18nService from '../services/I18nService.js';
 
 class ThreeModule {
     constructor() {
@@ -14,12 +15,7 @@ class ThreeModule {
             enter3dBtn: null,
             exit3dBtn: null,
             options3dBtn: null,
-            sectionNavButtons: null,
-            mainContent: null,
-            navigation: null,
-            heroContent: null,
-            footer: null,
-            discoverBtn: null
+            sectionNavButtons: null
         };
         this.isInitialized = false;
     }
@@ -36,7 +32,8 @@ class ThreeModule {
         // Crear instancia de la escena 3D
         if (ThreeSceneClass && this.elements.container) {
             this.scene = new ThreeSceneClass();
-            window.threeScene = this.scene; // Para compatibilidad
+            window.threeScene = this.scene;
+            I18nService.refresh3DPanels();
         }
 
         this._setupControls();
@@ -56,11 +53,6 @@ class ThreeModule {
         this.elements.exit3dBtn = document.getElementById('exit-3d');
         this.elements.options3dBtn = document.getElementById('options-3d');
         this.elements.sectionNavButtons = document.querySelector('.section-nav-buttons');
-        this.elements.mainContent = document.querySelector('main');
-        this.elements.navigation = document.querySelector('.nav');
-        this.elements.heroContent = document.querySelector('.hero-content');
-        this.elements.footer = document.querySelector('footer');
-        this.elements.discoverBtn = document.querySelector('.discover-btn');
     }
 
     /**

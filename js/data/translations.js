@@ -11,43 +11,46 @@ const translations = {
             projects: 'Projects',
             contact: 'Contact'
         },
+        three: {
+            options: 'OPTIONS'
+        },
         hero: {
             name: 'Luis María González Pradas',
-            title: 'Senior Full-Stack Developer | Tech Lead',
-            subtitle: 'Specialized in scalable end-to-end architectures with 10 years of experience',
+            title: 'Senior Full Stack Engineer & Tech Lead',
+            subtitle: 'Angular · NestJS · Clean architecture · 10+ years building production web apps',
             view3D: 'View in 3D',
             scrollDown: 'Scroll down to discover more'
         },
         about: {
             title: 'About Me',
-            description: 'Full-stack developer with <strong>10 years of experience</strong>, specialized in scalable end-to-end architectures. Frontend: Angular, RxJS, ThreeJS/WebGL with 60fps 3D rendering. Backend: NestJS with hexagonal architecture, authentication/authorization (OAuth2, API keys), async queues (BullJS/Redis), REST APIs and monitoring (Grafana). I have developed SDKs with custom authentication, implemented CI/CD and led technical teams.'
+            description: 'Full Stack engineer with over <strong>10 years of experience</strong> building production web applications, with a strong focus on Angular and NestJS, clean architecture (Hexagonal, DDD) and reactive state (NgRx, RxJS, Signals). Between 2021 and 2025 I was Tech Lead at Polygonal Mind, coordinating a team of <strong>11 people</strong> while leading the architecture of <strong>VIPE / CryptoAvatars</strong> and the <strong>Forbes Web3 Legacy Pass</strong>. Equally comfortable on frontend and backend, with hands-on experience in 3D (Three.js, Unity), AR/WebXR and Web3 (Solidity) as a differentiator. Currently open to Senior Full Stack or Tech Lead roles, remote or hybrid.'
         },
         skills: {
             title: 'Technical Stack',
             categories: {
                 frontend: {
                     title: 'Frontend',
-                    items: ['Angular (v2-20)', 'Next.js', 'TypeScript', 'RxJS', 'Signals', 'Angular Material', 'Ionic', 'ThreeJS/WebGL', 'NgRx']
+                    items: ['Angular (v12–v21)', 'TypeScript', 'Next.js', 'RxJS', 'Signals', 'Standalone Components', 'Ionic', 'Tailwind CSS', 'SCSS/Sass', 'NgRx']
                 },
                 backend: {
-                    title: 'Backend',
-                    items: ['NestJS', 'Node.js', 'Java', 'Python', 'REST APIs', 'MongoDB', 'MySQL', 'TypeORM', 'Redis', 'BullJS']
+                    title: 'Backend & Data',
+                    items: ['NestJS', 'Node.js', 'Java', 'REST APIs', 'WebSockets', 'PostgreSQL', 'MongoDB', 'Prisma', 'Redis', 'BullJS', 'MySQL']
                 },
                 devops: {
-                    title: 'DevOps & Tools',
-                    items: ['Docker', 'Jenkins', 'CI/CD', 'Grafana', 'Loki', 'Git', 'OAuth2', 'JWT']
+                    title: 'DevOps & Cloud',
+                    items: ['Docker', 'Docker Compose', 'Nginx', 'CI/CD (Jenkins, GitHub Actions)', 'DigitalOcean', 'AWS S3', 'Grafana', 'Loki']
                 },
                 gamedev: {
-                    title: 'Game Dev & 3D',
-                    items: ['Unity', 'Unreal Engine', 'C#', 'C++', 'Blender API', 'WebGL']
+                    title: '3D, AR & Web3',
+                    items: ['Three.js', 'WebGL', 'Unity (WebGL)', 'Unreal Engine', 'Blender API', 'WebXR', 'Solidity', 'Ethereum']
                 },
                 architecture: {
                     title: 'Architecture',
-                    items: ['Hexagonal/DDD', 'Microservices', 'Event-Driven', 'TDD', 'SOLID', 'Design Patterns']
+                    items: ['Hexagonal / DDD', 'Clean Architecture', 'SOLID', 'Microservices', 'Nx Monorepo', 'Module Federation', 'Microfrontends', 'Event-Driven']
                 },
                 mobile: {
-                    title: 'Mobile & Other',
-                    items: ['Android', 'Ionic', 'RPA', 'Automation', 'Selenium']
+                    title: 'Auth, Testing & Integrations',
+                    items: ['OAuth2', 'JWT', 'RBAC', 'Jest', 'Karma', 'Selenium', 'Stripe', 'WhatsApp Business API', 'LLM / AI', 'ElevenLabs']
                 }
             }
         },
@@ -55,54 +58,80 @@ const translations = {
             title: 'Professional Experience',
             jobs: [
                 {
-                    company: 'Freelance',
-                    role: 'Full-Stack Developer',
-                    period: 'Aug 2024 - Present',
+                    company: 'North Studio',
+                    role: 'Full Stack Developer',
+                    period: 'Oct 2025 – Mar 2026',
                     location: 'Remote',
-                    description: 'Full-stack application development for international clients after PolygonalMind closure.',
+                    logo: 'images/north-logo.jpg',
+                    logoAlt: 'North Studio Logo',
+                    description: '3D product configurator for <strong>Kettal</strong> (international luxury outdoor furniture brand) on Unity WebGL, integrated as an embeddable widget into Kettal\'s Nuxt/Vue.js frontend with real-time postMessage/API sync.',
                     highlights: [
-                        '<strong>Social App for NGOs (Swiss Client):</strong> Ionic/Angular mobile app + NestJS backend. Matching system, messaging and event management',
-                        '<strong>3D Sofa Configurator (Real Estate):</strong> Angular web with Unity viewer (WebGL). Modular configurator, Angular-Unity communication, quote generation'
+                        'Live at <a href="https://www.kettal.com/es/configurator" target="_blank" rel="noopener">kettal.com/es/configurator</a>.',
+                        'AR preview with WebXR and bidirectional real-time sync between the configurator and the host frontend.'
                     ]
                 },
                 {
-                    company: 'PolygonalMind',
-                    role: 'Tech Lead',
-                    period: 'Jul 2021 - Aug 2024',
-                    location: 'Zaragoza, Spain',
-                    description: 'Design and implementation of <strong>VIPE</strong> (<a href="https://vipe.io" target="_blank" rel="noopener">vipe.io</a>), 3D avatar ecosystem with marketplace and real-time rendering. Technical lead on Forbes web3 page (Next.js) and internal web tools.',
+                    company: 'Tarity',
+                    role: 'Full Stack Developer',
+                    period: 'Apr 2025 – Sep 2025',
+                    location: 'Remote',
+                    logo: 'images/tarity-logo.png',
+                    logoAlt: 'Tarity Logo',
+                    description: 'Cross-platform Ionic/Angular mobile app with NestJS backend on MongoDB for a social dating platform focused on philanthropy.',
                     highlights: [
-                        'Angular app with optimized ThreeJS (60fps), standalone components, signals and RxJS. Code splitting and lazy loading',
-                        'Hybrid state system (NgRx + custom Signals). Reusable modular components',
-                        'NestJS backend with hexagonal/DDD architecture, async queues (BullJS/Redis) for 3D processing',
-                        'Authentication system: OAuth2 (Google, Discord), custom OAuth for SDKs, API key management and role-based permissions',
-                        'Testing: Jest (unit), Selenium (E2E). Complete dockerization. CI/CD with Jenkins',
-                        'Observability: Grafana + Loki for logs, error analysis and system monitoring',
-                        'Cross-platform SDKs (JavaScript, Unity C#, Unreal C++) with documentation',
-                        'Blender Python API automation for avatar generation',
-                        'Team coordination of 11 people, code reviews and pair programming'
+                        'Real-time chat and push notifications (WebSockets, RxJS, NgRx).',
+                        'OAuth2 + SMS authentication and Stripe in-app payments. Product landing at <a href="https://tarity.com/" target="_blank" rel="noopener">tarity.com</a>.'
+                    ]
+                },
+                {
+                    company: 'Polygonal Mind',
+                    role: 'Tech Lead · Senior Full Stack Engineer',
+                    period: 'Jul 2021 – Jul 2025',
+                    location: 'Remote',
+                    logo: 'images/polygonal_mind_logo.jpg',
+                    logoAlt: 'Polygonal Mind Logo',
+                    description: 'Architecture and development of <strong>VIPE / CryptoAvatars</strong> (<a href="https://vipe.io" target="_blank" rel="noopener">vipe.io</a>), an interoperable Web3 avatar ecosystem, and the <strong>Forbes Web3 Legacy Pass</strong> in Next.js. Company closed in 2025.',
+                    highlights: [
+                        'Led a multidisciplinary team of <strong>11 people</strong>: architecture decisions, code reviews, mentoring and hiring. Notion sprints and Figma UI design with direct partner/client communication.',
+                        'Full-stack platform: Angular (NgRx, Signals, RxJS, SSR, lazy loading) + NestJS with <strong>Hexagonal Architecture</strong> and DDD. Heavy 3D jobs via BullJS/Redis.',
+                        'Migrated to <strong>Standalone Components</strong>, built a reusable Angular component library and optimised change detection (OnPush, trackBy) across heavy 3D views.',
+                        'Shipped three SDKs (JavaScript — <a href="https://www.npmjs.com/package/@vipeio/sdk" target="_blank" rel="noopener">npm</a> —, Unity and Unreal) and an iframe-based embeddable microfrontend architecture with postMessage.',
+                        'Docker, Jenkins CI/CD, Grafana/Loki observability. Three.js/WebGL, Blender API automation, NFT marketplace (Solidity) and ElevenLabs TTS integration.'
                     ]
                 },
                 {
                     company: 'esPublico Tecnología',
-                    role: 'Senior Java Developer',
-                    period: 'Dec 2019 - May 2021',
+                    role: 'Java Developer – RPA & Process Automation',
+                    period: 'Dec 2019 – Jul 2021',
                     location: 'Zaragoza, Spain',
-                    description: 'RPA solutions for administrative workflow automation, API integrations and Java desktop applications'
+                    logo: 'images/espublico_tech_logo.jpg',
+                    logoAlt: 'esPublico Logo',
+                    description: 'RPA workflows for public-administration processes, Java Swing desktop UIs and REST APIs. Unit and integration tests. Task management in Redmine.'
                 },
                 {
                     company: 'MedUX',
-                    role: 'Android Developer',
-                    period: 'Nov 2016 - Jul 2019',
+                    role: 'Java / Android Developer',
+                    period: 'Nov 2016 – Dec 2019',
                     location: 'Madrid, Spain',
-                    description: 'App for telecom operators for network quality measurement. Automated testing with Selenium'
+                    logo: 'images/meduxjpg.jpg',
+                    logoAlt: 'MedUX Logo',
+                    description: 'Android app (Dagger 2, MVP/MVVM) for large-scale network-quality diagnostics with REST APIs and MongoDB data pipelines. Selenium testing and Scrum with Jira.'
                 },
                 {
                     company: 'Tessera Studios',
-                    role: 'Game Developer',
-                    period: 'May 2016 - Dec 2016',
+                    role: 'Game Developer – VR / PS VR',
+                    period: 'May 2016 – Oct 2016',
                     location: 'Madrid, Spain',
-                    description: '<strong>Intruders: Hide and Seek</strong> (award "Best Game for Press" PlayStation Talents 2016). VR mechanics, AI and UI in C++/Unreal'
+                    logo: 'images/tesserajpg.jpg',
+                    logoAlt: 'Tessera Studios Logo',
+                    description: 'AI, UI and VR mechanics in C++ for <strong>Intruders: Hide and Seek</strong> (Unreal Engine 4, PlayStation VR), winner of <strong>PlayStation Talents 2016 – Best Game and Best Game for the Press</strong>.'
+                },
+                {
+                    company: 'Trucas',
+                    role: 'Android & Java Desktop Developer',
+                    period: 'Jun 2015 – Oct 2015',
+                    location: 'Zaragoza, Spain',
+                    description: 'Android apps (pet social network with geolocation, internal ticket-management system) and Point-of-Sale terminals in Java backed by MySQL.'
                 }
             ]
         },
@@ -110,44 +139,55 @@ const translations = {
             title: 'Featured Projects',
             items: [
                 {
-                    title: 'VIPE Platform',
-                    description: '3D Avatar Marketplace with blockchain integration and real-time rendering. Complete ecosystem with web3 wallet, NFT minting, and cross-platform SDK support.',
-                    technologies: ['Angular', 'Three.js', 'NestJS', 'MongoDB', 'Solidity', 'Web3']
+                    title: 'Kettal 3D Configurator',
+                    description: '3D product configurator for Kettal developed at <strong>North Studio</strong> on Unity WebGL and embedded as a framework-agnostic widget inside Kettal\'s Nuxt/Vue.js frontend, with bidirectional real-time sync and AR preview via WebXR.',
+                    technologies: ['Unity WebGL', 'WebXR', 'Nuxt / Vue.js', 'postMessage', 'Figma'],
+                    image: 'images/kettal.png',
+                    url: 'https://www.kettal.com/es/configurator'
                 },
                 {
-                    title: 'Avatar Webcam',
-                    description: 'Real-time virtual camera application that transforms your webcam into a 3D avatar. Face tracking, expression mapping, and seamless integration with video conferencing apps.',
-                    technologies: ['Unity', 'C#', 'Computer Vision', 'WebRTC']
+                    title: 'Tarity',
+                    description: 'Cross-platform mobile app for iOS and Android with Ionic/Angular and a NestJS backend on MongoDB. Real-time chat, push notifications, OAuth2/SMS authentication and Stripe in-app payments.',
+                    technologies: ['Ionic', 'Angular', 'NestJS', 'MongoDB', 'WebSockets', 'NgRx', 'Stripe'],
+                    image: 'images/tarity.png',
+                    url: 'https://tarity.com'
+                },
+                {
+                    title: 'VIPE / CryptoAvatars',
+                    description: 'Web3 ecosystem of interoperable 3D avatars compatible with VRChat, Decentraland and Ready Player Me. Full-stack Angular + NestJS platform with cross-platform SDKs, NFT marketplace and real-time 3D rendering.',
+                    technologies: ['Angular', 'Three.js', 'NestJS', 'MongoDB', 'Solidity', 'Web3'],
+                    image: 'https://miro.medium.com/v2/resize:fit:720/format:webp/1*DTn5k1-XaBaiO0y3ZJSRyQ.jpeg',
+                    url: 'https://medium.com/@vipeio'
+                },
+                {
+                    title: 'Wanxas',
+                    description: 'Personal SaaS for business management and automation. NestJS + PostgreSQL/Prisma backend with DDD and Hexagonal Architecture; Angular 20 frontend with Nx monorepo and Module Federation microfrontends.',
+                    technologies: ['Angular 20', 'NestJS', 'Nx', 'Module Federation', 'PostgreSQL', 'Prisma', 'Docker'],
+                    image: 'images/wanxas.png',
+                    url: 'https://wanxas.com'
                 },
                 {
                     title: 'Intruders: Hide and Seek',
-                    description: 'First-person stealth game for PS VR. Winner of "Best Game for Press" at PlayStation Talents 2016. Advanced AI, immersive VR mechanics.',
-                    technologies: ['Unreal Engine', 'C++', 'PlayStation VR']
-                },
-                {
-                    title: 'YetiRush',
-                    description: 'Multiplayer racing game for mobile platforms. Real-time synchronization, custom physics engine, and competitive matchmaking system.',
-                    technologies: ['Unity', 'Photon', 'C#', 'Mobile']
-                },
-                {
-                    title: 'Zizeron AI',
-                    description: 'Platform for analyzing images with artificial intelligence that detects and alerts about different situations. Real-time monitoring system with anomaly detection and automatic alerts.',
-                    technologies: ['Python', 'TensorFlow', 'OpenCV', 'React', 'Node.js']
+                    description: 'First-person stealth game for PlayStation VR. Winner of Best Game and Best Game for the Press at PlayStation Talents 2016. Advanced AI, immersive VR mechanics in Unreal Engine 4.',
+                    technologies: ['Unreal Engine 4', 'C++', 'PlayStation VR'],
+                    image: 'https://i.ytimg.com/vi/UjBUxNE7N4w/maxresdefault.jpg',
+                    url: 'https://store.steampowered.com/app/1045840/Intruders_Hide_and_Seek/'
                 }
             ]
         },
         contact: {
             title: 'Get in Touch',
-            description: 'Open to projects where I can contribute in frontend architecture, optimization and system design.',
+            description: 'Open to Senior Full Stack or Tech Lead positions where I can contribute in architecture, optimisation and system design. Remote or hybrid.',
             email: 'Email',
             linkedin: 'LinkedIn',
             github: 'GitHub',
             location: 'Location',
-            locationValue: 'Zaragoza, Spain (open to remote/hybrid)'
+            locationValue: 'Zaragoza, Spain · Open to remote / hybrid'
         },
         footer: {
             rights: 'All rights reserved.',
-            madeWith: 'Made with'
+            madeWith: 'Made with',
+            copyright: '© 2026 Luis María González Pradas. All rights reserved.'
         }
     },
     es: {
@@ -159,43 +199,46 @@ const translations = {
             projects: 'Proyectos',
             contact: 'Contacto'
         },
+        three: {
+            options: 'OPCIONES'
+        },
         hero: {
             name: 'Luis María González Pradas',
-            title: 'Desarrollador Full-Stack Senior | Tech Lead',
-            subtitle: 'Especializado en arquitecturas escalables end-to-end con 10 años de experiencia',
+            title: 'Senior Full Stack Engineer & Tech Lead',
+            subtitle: 'Angular · NestJS · Arquitectura limpia · 10 años dev · 5+ como Tech Lead',
             view3D: 'Ver en 3D',
             scrollDown: 'Desliza para descubrir más'
         },
         about: {
             title: 'Sobre mí',
-            description: 'Desarrollador full-stack con <strong>10 años de experiencia</strong>, especializado en arquitecturas escalables end-to-end. En frontend: Angular, RxJS, ThreeJS/WebGL con rendering 3D a 60fps. En backend: NestJS con arquitectura hexagonal, autenticación/autorización (OAuth2, API keys), colas asíncronas (BullJS/Redis), APIs REST y monitorización (Grafana). He desarrollado SDKs con autenticación propia, implementado CI/CD y liderado equipos técnicos.'
+            description: 'Desarrollador Full Stack con <strong>10 años de experiencia</strong> construyendo aplicaciones web en producción, los últimos <strong>5 como Tech Lead / Arquitecto</strong>, con foco en Angular y NestJS, arquitectura limpia (Hexagonal, DDD) y estado reactivo (NgRx, RxJS, Signals). Entre 2021 y 2025 fui Tech Lead en Polygonal Mind, coordinando un equipo de <strong>11 personas</strong> mientras lideraba la arquitectura de <strong>VIPE / CryptoAvatars</strong> y el <strong>Web3 Legacy Pass para Forbes</strong>. Me muevo igual de bien en frontend y backend, con experiencia real en 3D (Three.js, Unity), AR/WebXR y Web3 (Solidity) como diferenciador. Busco una posición Senior Full Stack o Tech Lead, en remoto o híbrido.'
         },
         skills: {
             title: 'Stack Técnico',
             categories: {
                 frontend: {
                     title: 'Frontend',
-                    items: ['Angular (v2-20)', 'Next.js', 'TypeScript', 'RxJS', 'Signals', 'Angular Material', 'Ionic', 'ThreeJS/WebGL', 'NgRx']
+                    items: ['Angular (v12–v21)', 'TypeScript', 'Next.js', 'RxJS', 'Signals', 'Standalone Components', 'Ionic', 'Tailwind CSS', 'SCSS/Sass', 'NgRx']
                 },
                 backend: {
-                    title: 'Backend',
-                    items: ['NestJS', 'Node.js', 'Java', 'Python', 'APIs REST', 'MongoDB', 'MySQL', 'TypeORM', 'Redis', 'BullJS']
+                    title: 'Backend & Datos',
+                    items: ['NestJS', 'Node.js', 'Java', 'APIs REST', 'WebSockets', 'PostgreSQL', 'MongoDB', 'Prisma', 'Redis', 'BullJS', 'MySQL']
                 },
                 devops: {
-                    title: 'DevOps & Herramientas',
-                    items: ['Docker', 'Jenkins', 'CI/CD', 'Grafana', 'Loki', 'Git', 'OAuth2', 'JWT']
+                    title: 'DevOps & Cloud',
+                    items: ['Docker', 'Docker Compose', 'Nginx', 'CI/CD (Jenkins, GitHub Actions)', 'DigitalOcean', 'AWS S3', 'Grafana', 'Loki']
                 },
                 gamedev: {
-                    title: 'Game Dev & 3D',
-                    items: ['Unity', 'Unreal Engine', 'C#', 'C++', 'Blender API', 'WebGL']
+                    title: '3D, AR & Web3',
+                    items: ['Three.js', 'WebGL', 'Unity (WebGL)', 'Unreal Engine', 'Blender API', 'WebXR', 'Solidity', 'Ethereum']
                 },
                 architecture: {
                     title: 'Arquitectura',
-                    items: ['Hexagonal/DDD', 'Microservicios', 'Event-Driven', 'TDD', 'SOLID', 'Patrones de Diseño']
+                    items: ['Hexagonal / DDD', 'Clean Architecture', 'SOLID', 'Microservicios', 'Nx Monorepo', 'Module Federation', 'Microfrontends', 'Event-Driven']
                 },
                 mobile: {
-                    title: 'Mobile & Otros',
-                    items: ['Android', 'Ionic', 'RPA', 'Automatización', 'Selenium']
+                    title: 'Auth, Testing & Integraciones',
+                    items: ['OAuth2', 'JWT', 'RBAC', 'Jest', 'Karma', 'Selenium', 'Stripe', 'WhatsApp Business API', 'LLM / IA', 'ElevenLabs']
                 }
             }
         },
@@ -203,54 +246,80 @@ const translations = {
             title: 'Experiencia Profesional',
             jobs: [
                 {
-                    company: 'Freelance',
-                    role: 'Desarrollador Full-Stack',
-                    period: 'Ago 2024 - Actualidad',
+                    company: 'North Studio',
+                    role: 'Full Stack Developer',
+                    period: 'Oct 2025 – Mar 2026',
                     location: 'Remoto',
-                    description: 'Desarrollo de aplicaciones full-stack para clientes internacionales tras el cierre de PolygonalMind.',
+                    logo: 'images/north-logo.jpg',
+                    logoAlt: 'North Studio Logo',
+                    description: 'Configurador 3D de producto para <strong>Kettal</strong> (marca internacional de mobiliario outdoor de lujo) sobre Unity WebGL, integrado como widget embebible en el frontend Nuxt/Vue.js de Kettal con sincronización bidireccional en tiempo real (postMessage/API).',
                     highlights: [
-                        '<strong>App social para ONGs (Cliente Suizo):</strong> App móvil Ionic/Angular + backend NestJS. Sistema de matching, mensajería y gestión de eventos',
-                        '<strong>Configurador 3D de sofás (Inmobiliaria):</strong> Web Angular con visor Unity (WebGL). Configurador modular, comunicación Angular-Unity, generación de presupuestos'
+                        'En producción: <a href="https://www.kettal.com/es/configurator" target="_blank" rel="noopener">kettal.com/es/configurator</a>.',
+                        'Preview AR con WebXR y sincronización bidireccional en tiempo real entre el configurador y el frontend host.'
                     ]
                 },
                 {
-                    company: 'PolygonalMind',
-                    role: 'Tech Lead',
-                    period: 'Jul 2021 - Ago 2024',
-                    location: 'Zaragoza, España',
-                    description: 'Diseño e implementación de <strong>VIPE</strong> (<a href="https://vipe.io" target="_blank" rel="noopener">vipe.io</a>), ecosistema de avatares 3D con marketplace y renderizado en tiempo real. Lead técnico en página web3 de Forbes (Next.js) y herramientas web internas.',
+                    company: 'Tarity',
+                    role: 'Full Stack Developer',
+                    period: 'Abr 2025 – Sep 2025',
+                    location: 'Remoto',
+                    logo: 'images/tarity-logo.png',
+                    logoAlt: 'Tarity Logo',
+                    description: 'App móvil multiplataforma Ionic/Angular con backend NestJS sobre MongoDB para una plataforma social de citas enfocada en filantropía.',
                     highlights: [
-                        'App Angular con ThreeJS optimizado (60fps), standalone components, signals y RxJS. Code splitting y lazy loading',
-                        'Sistema de estado híbrido (NgRx + Signals custom). Componentes modulares reutilizables',
-                        'Backend NestJS con arquitectura hexagonal/DDD, colas asíncronas (BullJS/Redis) para procesamiento 3D',
-                        'Sistema de autenticación: OAuth2 (Google, Discord), OAuth propio para SDKs, gestión de API keys y permisos por rol',
-                        'Testing: Jest (unitarios), Selenium (E2E). Dockerización completa. CI/CD con Jenkins',
-                        'Observabilidad: Grafana + Loki para logs, análisis de errores y monitorización del sistema',
-                        'SDKs multiplataforma (JavaScript, Unity C#, Unreal C++) con documentación',
-                        'Automatización Blender Python API para generación de avatares',
-                        'Coordinación de equipo de 11 personas, code reviews y pair programming'
+                        'Chat y notificaciones push en tiempo real (WebSockets, RxJS, NgRx).',
+                        'Autenticación OAuth2 + SMS y pagos in-app con Stripe. Landing del producto en <a href="https://tarity.com/" target="_blank" rel="noopener">tarity.com</a>.'
+                    ]
+                },
+                {
+                    company: 'Polygonal Mind',
+                    role: 'Tech Lead · Senior Full Stack Engineer',
+                    period: 'Jul 2021 – Jul 2025',
+                    location: 'Remoto',
+                    logo: 'images/polygonal_mind_logo.jpg',
+                    logoAlt: 'Polygonal Mind Logo',
+                    description: 'Arquitectura y desarrollo de <strong>VIPE / CryptoAvatars</strong> (<a href="https://vipe.io" target="_blank" rel="noopener">vipe.io</a>), ecosistema Web3 de avatares interoperables, y el <strong>Web3 Legacy Pass para Forbes</strong> en Next.js. La empresa cerró en 2025.',
+                    highlights: [
+                        'Lideré un equipo multidisciplinar de <strong>11 personas</strong>: decisiones de arquitectura, code reviews, mentoring y contratación. Sprints en Notion y diseño UI en Figma con trato directo con partners y clientes.',
+                        'Plataforma full-stack: Angular (NgRx, Signals, RxJS, SSR, lazy loading) + NestJS con <strong>Arquitectura Hexagonal</strong> y DDD. Trabajos 3D pesados con BullJS/Redis.',
+                        'Migré a <strong>Standalone Components</strong>, diseñé una librería interna de componentes reutilizables y optimicé change detection (OnPush, trackBy) en las vistas 3D más pesadas.',
+                        'Publiqué tres SDKs (JavaScript — <a href="https://www.npmjs.com/package/@vipeio/sdk" target="_blank" rel="noopener">npm</a> —, Unity y Unreal) y una arquitectura de microfrontends embebibles vía iframe con postMessage.',
+                        'Docker, CI/CD con Jenkins, observabilidad Grafana/Loki. Three.js/WebGL, automatización con Blender API, marketplace NFT (Solidity) e integración ElevenLabs TTS.'
                     ]
                 },
                 {
                     company: 'esPublico Tecnología',
-                    role: 'Senior Java Developer',
-                    period: 'Dic 2019 - May 2021',
+                    role: 'Java Developer – RPA & Automatización de Procesos',
+                    period: 'Dic 2019 – Jul 2021',
                     location: 'Zaragoza, España',
-                    description: 'Soluciones RPA para automatización de flujos administrativos, integraciones API y aplicaciones de escritorio Java'
+                    logo: 'images/espublico_tech_logo.jpg',
+                    logoAlt: 'esPublico Logo',
+                    description: 'Flujos RPA para procesos de administración pública, UIs de escritorio Java Swing y APIs REST. Tests unitarios y de integración. Gestión de tareas en Redmine.'
                 },
                 {
                     company: 'MedUX',
-                    role: 'Android Developer',
-                    period: 'Nov 2016 - Jul 2019',
+                    role: 'Java / Android Developer',
+                    period: 'Nov 2016 – Dic 2019',
                     location: 'Madrid, España',
-                    description: 'App para operadores de telecomunicaciones para medición de calidad de red. Testing automatizado con Selenium'
+                    logo: 'images/meduxjpg.jpg',
+                    logoAlt: 'MedUX Logo',
+                    description: 'App Android (Dagger 2, MVP/MVVM) para diagnóstico de calidad de red a gran escala con APIs REST y pipelines sobre MongoDB. Tests con Selenium y Scrum con Jira.'
                 },
                 {
                     company: 'Tessera Studios',
-                    role: 'Game Developer',
-                    period: 'May 2016 - Dic 2016',
+                    role: 'Game Developer – VR / PS VR',
+                    period: 'May 2016 – Oct 2016',
                     location: 'Madrid, España',
-                    description: '<strong>Intruders: Hide and Seek</strong> (premio "Mejor Juego para la Prensa" PlayStation Talents 2016). Mecánicas VR, IA y UI en C++/Unreal'
+                    logo: 'images/tesserajpg.jpg',
+                    logoAlt: 'Tessera Studios Logo',
+                    description: 'Mecánicas de IA, UI y realidad virtual en C++ para <strong>Intruders: Hide and Seek</strong> (Unreal Engine 4, PlayStation VR), ganador de <strong>PlayStation Talents 2016 – Mejor Juego y Mejor Juego para la Prensa</strong>.'
+                },
+                {
+                    company: 'Trucas',
+                    role: 'Android & Java Desktop Developer',
+                    period: 'Jun 2015 – Oct 2015',
+                    location: 'Zaragoza, España',
+                    description: 'Apps Android (red social para mascotas con geolocalización, gestión interna de tickets) y terminales de Punto de Venta en Java sobre MySQL.'
                 }
             ]
         },
@@ -258,47 +327,57 @@ const translations = {
             title: 'Proyectos Destacados',
             items: [
                 {
-                    title: 'VIPE Platform',
-                    description: 'Marketplace de Avatares 3D con integración blockchain y renderizado en tiempo real. Ecosistema completo con wallet web3, minting de NFTs y soporte SDK multiplataforma.',
-                    technologies: ['Angular', 'Three.js', 'NestJS', 'MongoDB', 'Solidity', 'Web3']
+                    title: 'Configurador 3D Kettal',
+                    description: 'Configurador 3D de producto para Kettal desarrollado en <strong>North Studio</strong> sobre Unity WebGL, integrado como widget embebible agnóstico de framework en el frontend Nuxt/Vue.js de Kettal, con sincronización bidireccional en tiempo real y preview AR vía WebXR.',
+                    technologies: ['Unity WebGL', 'WebXR', 'Nuxt / Vue.js', 'postMessage', 'Figma'],
+                    image: 'images/kettal.png',
+                    url: 'https://www.kettal.com/es/configurator'
                 },
                 {
-                    title: 'Avatar Webcam',
-                    description: 'Aplicación de cámara virtual en tiempo real que transforma tu webcam en un avatar 3D. Seguimiento facial, mapeo de expresiones e integración fluida con apps de videoconferencia.',
-                    technologies: ['Unity', 'C#', 'Computer Vision', 'WebRTC']
+                    title: 'Tarity',
+                    description: 'App móvil multiplataforma para iOS y Android con Ionic/Angular y backend NestJS sobre MongoDB. Chat en tiempo real, notificaciones push, autenticación OAuth2/SMS y pagos in-app con Stripe.',
+                    technologies: ['Ionic', 'Angular', 'NestJS', 'MongoDB', 'WebSockets', 'NgRx', 'Stripe'],
+                    image: 'images/tarity.png',
+                    url: 'https://tarity.com'
+                },
+                {
+                    title: 'VIPE / CryptoAvatars',
+                    description: 'Ecosistema Web3 de avatares 3D interoperables con VRChat, Decentraland y Ready Player Me. Plataforma full-stack Angular + NestJS con SDKs multiplataforma, marketplace NFT y renderizado 3D en tiempo real.',
+                    technologies: ['Angular', 'Three.js', 'NestJS', 'MongoDB', 'Solidity', 'Web3'],
+                    image: 'https://miro.medium.com/v2/resize:fit:720/format:webp/1*DTn5k1-XaBaiO0y3ZJSRyQ.jpeg',
+                    url: 'https://medium.com/@vipeio'
+                },
+                {
+                    title: 'Wanxas',
+                    description: 'SaaS personal de gestión y automatización para negocios. Backend NestJS + PostgreSQL/Prisma con DDD y Arquitectura Hexagonal; frontend Angular 20 con monorepo Nx y microfrontends con Module Federation.',
+                    technologies: ['Angular 20', 'NestJS', 'Nx', 'Module Federation', 'PostgreSQL', 'Prisma', 'Docker'],
+                    image: 'images/wanxas.png',
+                    url: 'https://wanxas.com'
                 },
                 {
                     title: 'Intruders: Hide and Seek',
-                    description: 'Juego de sigilo en primera persona para PS VR. Ganador de "Mejor Juego para la Prensa" en PlayStation Talents 2016. IA avanzada, mecánicas VR inmersivas.',
-                    technologies: ['Unreal Engine', 'C++', 'PlayStation VR']
-                },
-                {
-                    title: 'YetiRush',
-                    description: 'Juego de carreras multijugador para plataformas móviles. Sincronización en tiempo real, motor de física personalizado y sistema de matchmaking competitivo.',
-                    technologies: ['Unity', 'Photon', 'C#', 'Mobile']
-                },
-                {
-                    title: 'Zizeron AI',
-                    description: 'Plataforma para analizar imágenes con inteligencia artificial que detecta y alerta sobre diferentes situaciones. Sistema de monitoreo en tiempo real con detección de anomalías y alertas automáticas.',
-                    technologies: ['Python', 'TensorFlow', 'OpenCV', 'React', 'Node.js']
+                    description: 'Juego de sigilo en primera persona para PlayStation VR. Ganador de Mejor Juego y Mejor Juego para la Prensa en PlayStation Talents 2016. IA avanzada y mecánicas VR inmersivas en Unreal Engine 4.',
+                    technologies: ['Unreal Engine 4', 'C++', 'PlayStation VR'],
+                    image: 'https://i.ytimg.com/vi/UjBUxNE7N4w/maxresdefault.jpg',
+                    url: 'https://store.steampowered.com/app/1045840/Intruders_Hide_and_Seek/'
                 }
             ]
         },
         contact: {
             title: 'Contacto',
-            description: 'Abierto a proyectos donde pueda aportar en arquitectura frontend, optimización y diseño de sistemas.',
+            description: 'Abierto a posiciones Senior Full Stack o Tech Lead donde pueda aportar en arquitectura, optimización y diseño de sistemas. Remoto o híbrido.',
             email: 'Email',
             linkedin: 'LinkedIn',
             github: 'GitHub',
             location: 'Ubicación',
-            locationValue: 'Zaragoza, España (abierto a remoto/híbrido)'
+            locationValue: 'Zaragoza, España · Disponible remoto / híbrido'
         },
         footer: {
             rights: 'Todos los derechos reservados.',
-            madeWith: 'Hecho con'
+            madeWith: 'Hecho con',
+            copyright: '© 2026 Luis María González Pradas. Todos los derechos reservados.'
         }
     }
 };
 
 export default translations;
-

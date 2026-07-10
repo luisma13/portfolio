@@ -80,7 +80,7 @@ class ThreeModule {
         });
 
         // Configurar botones de navegación de secciones
-        const navButtons = this.elements.sectionNavButtons?.querySelectorAll('.nav-button');
+        const navButtons = this.elements.sectionNavButtons?.querySelectorAll('.section-nav-button');
         
         navButtons?.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -117,11 +117,13 @@ class ThreeModule {
 
             if (newValue) {
                 this.elements.sectionNavButtons.classList.add('active');
+                this.elements.sectionNavButtons.style.display = 'flex';
                 this.elements.sectionNavButtons.style.opacity = '1';
                 this.elements.sectionNavButtons.style.visibility = 'visible';
                 this.elements.sectionNavButtons.style.pointerEvents = 'auto';
             } else {
                 this.elements.sectionNavButtons.classList.remove('active');
+                this.elements.sectionNavButtons.style.display = 'none';
                 this.elements.sectionNavButtons.style.opacity = '0';
                 this.elements.sectionNavButtons.style.visibility = 'hidden';
                 this.elements.sectionNavButtons.style.pointerEvents = 'none';

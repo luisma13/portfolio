@@ -254,8 +254,9 @@ class ThreeScene {
         this.isPointerDown = false;
         this.didDrag = false;
         this.hoveredPanel = null;
-        this.dragSensitivity = 0.006;
-        this.dragThreshold = 4;
+        this.dragSensitivity = this.quality.isMobile ? 0.009 : 0.006;
+        this.dragThreshold = this.quality.isMobile ? 12 : 4;
+        this.hitSizeMultiplier = this.quality.isMobile ? 1.25 : 1;
 
         Object.entries(this.panels).forEach(([section, panel]) => {
             panel.userData.section = section;
@@ -287,6 +288,7 @@ class ThreeScene {
     resetPointerState() {
         this.isPointerDown = false;
         this.didDrag = false;
+        this.pointerDownPanel = null;
         this.setHoveredPanel(null);
         this.renderer.domElement.style.cursor = '';
         this.container.classList.remove('is-dragging');
@@ -351,6 +353,9 @@ class ThreeScene {
             this.currentTarget = null;
         }
 
+        this.updatePointer(event);
+        this.pointerDownPanel = this.getPanelHit();
+
         this.isPointerDown = true;
         this.didDrag = false;
         this.pointerDownPos = { x: event.clientX, y: event.clientY };
@@ -403,12 +408,13 @@ class ThreeScene {
 
         if (this.canDrag() && Math.abs(dx) <= this.dragThreshold) {
             this.updatePointer(event);
-            const panel = this.getPanelHit();
+            const panel = this.pointerDownPanel || this.getPanelHit();
             if (panel) {
                 this.moveToTarget(panel.userData.section);
             }
         }
 
+        this.pointerDownPanel = null;
         this.resetPointerState();
 
         if (this.canDrag()) {
@@ -734,11 +740,11 @@ class ThreeScene {
     }
 
     createPanelHitMesh(section, panel, hitSize) {
+        const width = Math.min(1, hitSize.width * this.hitSizeMultiplier) * this.panelDisplayWidth;
+        const height = Math.min(1, hitSize.height * this.hitSizeMultiplier) * this.panelDisplayHeight;
+
         const hitMesh = new THREE.Mesh(
-            new THREE.PlaneGeometry(
-                hitSize.width * this.panelDisplayWidth,
-                hitSize.height * this.panelDisplayHeight
-            ),
+            new THREE.PlaneGeometry(width, height),
             new THREE.MeshBasicMaterial({ visible: false })
         );
         hitMesh.userData.section = section;
@@ -751,11 +757,11 @@ class ThreeScene {
         const hitMesh = panel.userData.hitMesh;
         if (!hitMesh) return;
 
+        const width = Math.min(1, hitSize.width * this.hitSizeMultiplier) * this.panelDisplayWidth;
+        const height = Math.min(1, hitSize.height * this.hitSizeMultiplier) * this.panelDisplayHeight;
+
         hitMesh.geometry.dispose();
-        hitMesh.geometry = new THREE.PlaneGeometry(
-            hitSize.width * this.panelDisplayWidth,
-            hitSize.height * this.panelDisplayHeight
-        );
+        hitMesh.geometry = new THREE.PlaneGeometry(width, height);
     }
 
     createTextTexture(text) {

@@ -232,6 +232,7 @@ body.mode-3d-active #three-container {
 body.mode-3d-active #three-container canvas {
     pointer-events: auto;
     cursor: grab;
+    touch-action: none;
 }
 
 body.mode-3d-active #three-container.is-dragging canvas {
@@ -256,12 +257,17 @@ body.mode-3d-active .nav-buttons-container {
     pointer-events: auto !important;
 }
 
-/* Los botones dentro del menú también deben ser visibles */
-body.mode-3d-active .section-nav-buttons .nav-button {
+/* Los botones del menú OPTIONS solo cuando está abierto */
+body.mode-3d-active .section-nav-buttons.active .section-nav-button {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
+}
+
+body.mode-3d-active .section-nav-buttons:not(.active) {
+    display: none !important;
+    pointer-events: none !important;
 }
 
 .home-background {
@@ -1295,7 +1301,7 @@ footer {
         transform: translateX(-50%) translateY(0);
     }
 
-    .section-nav-buttons .nav-button {
+    .section-nav-buttons .section-nav-button {
         width: 100%;
         min-width: unset;
         padding: 0.7rem 1.2rem;
@@ -1615,7 +1621,7 @@ main {
     bottom: 6rem;
     left: 50%;
     transform: translateX(-50%) translateY(20px);
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 0.8rem;
     z-index: 10003;
@@ -1636,6 +1642,7 @@ main {
 }
 
 .section-nav-buttons.active {
+    display: flex;
     transform: translateX(-50%) translateY(0);
     opacity: 1 !important;
     visibility: visible !important;
@@ -1644,13 +1651,14 @@ main {
 }
 
 #three-container.fullscreen .section-nav-buttons {
-    display: flex;
+    display: none;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
 
 #three-container.fullscreen .section-nav-buttons.active {
+    display: flex;
     transform: translateX(-50%) translateY(0);
     opacity: 1;
     visibility: visible;
@@ -1674,7 +1682,7 @@ main {
     border-top: 10px solid rgba(0, 247, 255, 0.3);
 }
 
-.section-nav-buttons .nav-button {
+.section-nav-buttons .section-nav-button {
     position: static;
     transform: none;
     background: rgba(0, 247, 255, 0.1);
@@ -1686,9 +1694,13 @@ main {
     padding: 0.8rem 1.2rem;
     font-size: 0.9rem;
     min-width: unset;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
-.section-nav-buttons .nav-button:hover {
+.section-nav-buttons .section-nav-button:hover {
     background: rgba(0, 247, 255, 0.2);
     transform: translateX(5px);
     box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
